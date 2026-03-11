@@ -25,574 +25,1664 @@
   --danger: #ef4444;
   --nav-bg: #1d4040;
   --nav-active: #2e5f5f;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
   --shadow: 0 2px 8px rgba(0,0,0,0.1);
   --shadow-lg: 0 4px 20px rgba(0,0,0,0.12);
   --radius: 6px;
   --radius-sm: 4px;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px}
 
-/* NAV */
-.global-nav{background:var(--nav-bg);height:48px;display:flex;align-items:center;padding:0 20px;gap:0;position:sticky;top:0;z-index:200}
-.nav-logo{display:flex;align-items:center;gap:8px;margin-right:24px;text-decoration:none}
-.nav-logo-icon{width:30px;height:30px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;color:white;font-size:13px;font-weight:900}
-.nav-logo-text{color:white;font-size:15px;font-weight:700}
-.nav-tab{height:48px;display:flex;align-items:center;padding:0 14px;color:rgba(255,255,255,0.65);font-size:13px;cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap}
-.nav-tab:hover{color:white;background:var(--nav-active)}
-.nav-tab.active{color:white;border-bottom-color:var(--accent);background:var(--nav-active)}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-.nav-upload-btn{display:flex;align-items:center;gap:6px;padding:6px 14px;background:var(--accent);border:none;border-radius:20px;color:white;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s}
-.nav-upload-btn:hover{background:var(--accent-dark)}
-.nav-count{font-size:11px;color:rgba(255,255,255,0.6);font-family:'DM Mono',monospace}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* FILTER STRIP */
-.filter-strip{background:white;border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:48px;z-index:100}
-.hit-badge{font-size:12px;color:var(--text2);white-space:nowrap;padding-right:10px;border-right:1px solid var(--border);margin-right:4px}
-.hit-badge strong{font-size:20px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;margin:0 2px}
-.search-wrap{position:relative;flex:1;max-width:320px}
-.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text3)}
-.search-input{width:100%;border:1px solid var(--border2);border-radius:20px;padding:7px 12px 7px 32px;font-size:12px;font-family:inherit;color:var(--text);outline:none;transition:border-color .15s}
-.search-input:focus{border-color:var(--accent)}
-.search-input::placeholder{color:var(--text4)}
-.filter-chip-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;background:white;border:1px solid var(--border2);border-radius:20px;font-size:11px;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
-.filter-chip-btn:hover,.filter-chip-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
-.filter-chip-btn .arrow{font-size:9px;transition:transform .15s}
-.filter-chip-btn.active .arrow{transform:rotate(180deg)}
-.active-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:#f0f1f4;border:1px solid var(--border2);border-radius:20px;font-size:11px;color:var(--text2)}
-.active-tag .rm{cursor:pointer;color:var(--text3);font-size:13px;line-height:1}
-.active-tag .rm:hover{color:var(--danger)}
-.clear-btn{font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:4px 6px;white-space:nowrap}
-.clear-btn:hover{color:var(--danger)}
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 13px;
+}
 
-/* DROPDOWN */
-.dd-wrapper{position:sticky;top:88px;z-index:150}
-.dd-panel{display:none;background:white;border:1px solid var(--border);border-top:none;box-shadow:var(--shadow-lg);animation:slideDown .15s ease}
-.dd-panel.open{display:block}
-@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.dd-inner{padding:16px 20px;display:flex;gap:24px;flex-wrap:wrap}
-.dd-section{min-width:160px}
-.dd-title{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
-.dd-checks{display:flex;flex-direction:column;gap:4px}
-.dd-check{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;color:var(--text2);transition:background .1s}
-.dd-check:hover{background:#f5f6f8}
-.dd-check input{accent-color:var(--accent);width:13px;height:13px;flex-shrink:0}
-.dd-check .cnt{margin-left:auto;font-size:10px;color:var(--text4);font-family:'DM Mono',monospace}
-.dd-footer{padding:10px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
-.dd-apply{padding:7px 20px;background:var(--accent);border:none;border-radius:4px;font-family:inherit;font-size:12px;font-weight:700;color:white;cursor:pointer}
-.dd-apply:hover{background:var(--accent-dark)}
-.dd-cancel{padding:7px 14px;background:none;border:1px solid var(--border2);border-radius:4px;font-family:inherit;font-size:12px;color:var(--text2);cursor:pointer}
+/* ===================== GLOBAL NAV ===================== */
+.global-nav {
+  background: var(--nav-bg);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
 
-/* LAYOUT */
-.layout{display:flex;min-height:calc(100vh - 48px - 40px)}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 28px;
+  text-decoration: none;
+}
 
-/* SIDEBAR */
-.sidebar{width:200px;flex-shrink:0;background:white;border-right:1px solid var(--border);overflow-y:auto;padding-bottom:80px}
-.sb-section{padding:12px 14px;border-bottom:1px solid var(--border)}
-.sb-title{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
-.sb-check{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;color:var(--text2);transition:background .1s}
-.sb-check:hover{background:#f5f6f8}
-.sb-check input{accent-color:var(--accent);width:13px;height:13px}
-.sb-cnt{margin-left:auto;font-size:10px;color:var(--text4);font-family:'DM Mono',monospace}
-.toggle-row{display:flex;align-items:center;gap:6px;padding:6px 0;font-size:11px;color:var(--text3)}
-.toggle{width:34px;height:18px;background:var(--border2);border-radius:9px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
-.toggle.on{background:var(--accent)}
-.toggle::after{content:'';position:absolute;width:14px;height:14px;background:white;border-radius:50%;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
-.toggle.on::after{left:18px}
+.nav-logo-icon {
+  width: 30px; height: 30px;
+  background: var(--accent);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -1px;
+}
 
-/* CONTENT */
-.content{flex:1;overflow:hidden;display:flex;flex-direction:column}
-.sort-bar{background:white;border-bottom:1px solid var(--border);padding:8px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0}
-.sort-sel{border:1px solid var(--border2);border-radius:var(--radius-sm);padding:5px 22px 5px 8px;font-size:12px;font-family:inherit;color:var(--text);background:white;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%239094a8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center}
-.sort-sel:focus{border-color:var(--accent)}
-.sel-all-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;background:white;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:11px;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s}
-.sel-all-btn:hover{border-color:var(--accent);color:var(--accent)}
-.export-btn{display:flex;align-items:center;gap:5px;padding:5px 14px;background:var(--success);border:none;border-radius:var(--radius-sm);font-size:11px;font-weight:700;color:white;cursor:pointer;font-family:inherit;transition:opacity .15s}
-.export-btn:hover{opacity:.85}
-.result-cnt{font-size:11px;color:var(--text3);margin-left:auto;font-family:'DM Mono',monospace}
-.result-cnt span{color:var(--accent);font-weight:600}
+.nav-logo-text {
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
 
-/* CARDS */
-.cards-wrap{flex:1;overflow-y:auto;padding:10px 12px}
-.card{background:white;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;transition:box-shadow .15s,border-color .15s;cursor:pointer}
-.card:hover{box-shadow:var(--shadow);border-color:var(--border2)}
-.card.selected{border-color:var(--accent);box-shadow:0 0 0 2px rgba(234,96,0,.1)}
-.card-top{display:flex;padding:12px 14px 8px;gap:12px;align-items:flex-start}
-.card-logo{width:44px;height:44px;border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;background:#f8f9fb;flex-shrink:0}
-.card-body{flex:1;min-width:0}
-.card-crumb{font-size:10px;color:var(--text3);margin-bottom:2px}
-.card-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.stock-tag{font-size:10px;padding:1px 6px;border-radius:3px;background:#fef3c7;color:#d97706;border:1px solid #fde68a;font-weight:600}
-.card-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--text3)}
-.card-meta-item{display:flex;align-items:center;gap:3px}
-.contact-badges{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
-.badge{display:inline-flex;align-items:center;gap:2px;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600}
-.badge-tel{background:#e8f4fe;color:var(--info);border:1px solid #bdd8fc}
-.badge-fax{background:#f0f0f0;color:var(--text3);border:1px solid var(--border2)}
-.badge-mail{background:#f0faf5;color:var(--success);border:1px solid #a3e4c4}
-.badge-web{background:#fff3eb;color:var(--accent);border:1px solid var(--accent-mid)}
-.card-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
-.status-sel{border:1px solid var(--border2);border-radius:var(--radius-sm);padding:5px 22px 5px 8px;font-size:11px;font-family:inherit;color:var(--text);background:white;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' fill='%239094a8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 5px center;min-width:100px;transition:border-color .15s}
-.status-sel:focus{border-color:var(--accent)}
-.status-new{border-color:var(--text4);color:var(--text2)}
-.status-callback{border-color:var(--warn);color:var(--warn);background:#fffbf0}
-.status-appt{border-color:var(--success);color:var(--success);background:#f0faf5}
-.status-ng{border-color:var(--danger);color:var(--danger);background:#fff5f5}
-.card-bottom{display:flex;padding:7px 14px;border-top:1px solid var(--border);background:#fafbfc;gap:12px;align-items:flex-start;flex-wrap:wrap}
-.match-pct{font-size:11px;color:var(--text3);white-space:nowrap}
-.match-num{font-weight:700;font-family:'DM Mono',monospace}
-.kw-row{flex:1;display:flex;gap:4px;flex-wrap:wrap;align-items:center;font-size:11px;color:var(--text3)}
-.kw-chip{padding:2px 7px;background:#e8f4fe;color:var(--info);border-radius:3px;font-size:10px}
-.memo-area{width:100%;background:#f8f9fb;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 8px;font-size:11px;font-family:inherit;color:var(--text);resize:none;outline:none;transition:border-color .15s;min-height:50px}
-.memo-area:focus{border-color:var(--accent);background:white}
-.memo-area::placeholder{color:var(--text4)}
-.save-memo-btn{padding:4px 12px;background:var(--accent);border:none;border-radius:var(--radius-sm);font-size:11px;font-weight:700;color:white;cursor:pointer;font-family:inherit;transition:background .15s}
-.save-memo-btn:hover{background:var(--accent-dark)}
+.nav-tabs {
+  display: flex;
+  height: 100%;
+}
 
-/* EMPTY */
-.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--text3);padding:60px}
-.empty-icon{font-size:48px;opacity:.4}
-.empty-title{font-size:16px;font-weight:600}
-.empty-sub{font-size:12px;text-align:center;line-height:1.7}
-.upload-zone-big{margin-top:16px;padding:24px 40px;border:2px dashed var(--border2);border-radius:var(--radius);text-align:center;cursor:pointer;transition:all .2s}
-.upload-zone-big:hover{border-color:var(--accent);background:var(--accent-light)}
-.upload-zone-big .uz-icon{font-size:32px;margin-bottom:6px}
-.upload-zone-big .uz-text{font-size:13px;color:var(--text2)}
-.upload-zone-big .uz-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.nav-tab {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+  text-decoration: none;
+}
 
-/* BOTTOM BAR */
-.bottom-bar{position:sticky;bottom:0;background:white;border-top:2px solid var(--border);padding:9px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 -4px 16px rgba(0,0,0,.08);z-index:100}
-.bottom-count{font-size:13px;color:var(--text2)}
-.bottom-count strong{font-size:16px;font-weight:700;color:var(--text);font-family:'DM Mono',monospace}
-.bottom-dl{display:flex;align-items:center;gap:6px;padding:8px 20px;background:var(--accent);border:none;border-radius:var(--radius);color:white;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s}
-.bottom-dl:hover{background:var(--accent-dark)}
+.nav-tab:hover { color: white; background: var(--nav-active); }
+.nav-tab.active {
+  color: white;
+  border-bottom-color: var(--accent);
+  background: var(--nav-active);
+}
 
-/* MODAL */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center}
-.modal-bg.open{display:flex}
-.modal{background:white;border-radius:8px;padding:24px;width:460px;box-shadow:var(--shadow-lg)}
-.modal-title{font-size:15px;font-weight:700;margin-bottom:14px}
-.upload-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all .2s}
-.upload-zone:hover{border-color:var(--accent);background:var(--accent-light)}
-.uz-ico{font-size:32px;margin-bottom:6px}
-.uz-txt{font-size:13px;color:var(--text2)}
-.uz-sub{font-size:11px;color:var(--text3);margin-top:3px}
-.col-hint{margin-top:12px;padding:10px 12px;background:#f8f9fb;border-radius:var(--radius);font-size:11px;color:var(--text3);line-height:1.8}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
-.m-cancel{padding:7px 18px;background:none;border:1px solid var(--border2);border-radius:4px;font-family:inherit;cursor:pointer;font-size:12px;color:var(--text2)}
-.m-ok{padding:7px 18px;background:var(--accent);border:none;border-radius:4px;font-family:inherit;cursor:pointer;font-size:12px;font-weight:700;color:white}
+.nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-/* SCROLLBAR */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:var(--text4)}
+.nav-icon-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  transition: background 0.15s;
+}
+.nav-icon-btn:hover { background: rgba(255,255,255,0.2); color: white; }
 
-.highlight{color:var(--accent);font-weight:700;background:rgba(234,96,0,.08);border-radius:2px;padding:0 1px}
-.cb{accent-color:var(--accent);width:13px;height:13px;cursor:pointer;flex-shrink:0}
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,255,255,0.85);
+  font-size: 12px;
+  cursor: pointer;
+}
 
-/* PAGINATION */
-.pagination{padding:8px 14px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);background:white;flex-shrink:0}
-.page-info{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
-.page-btns{display:flex;gap:3px}
-.pg-btn{width:28px;height:28px;background:white;border:1px solid var(--border);border-radius:4px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--text2);transition:all .15s;display:flex;align-items:center;justify-content:center}
-.pg-btn:hover{border-color:var(--accent);color:var(--accent)}
-.pg-btn.active{background:var(--accent);border-color:var(--accent);color:white;font-weight:700}
-.pg-btn:disabled{opacity:.4;cursor:default}
+.nav-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ===================== SEARCH BAR ===================== */
+.search-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hit-count {
+  font-size: 13px;
+  color: var(--text2);
+  white-space: nowrap;
+  min-width: 70px;
+}
+
+.hit-count strong {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0 2px;
+  font-family: 'DM Mono', monospace;
+}
+
+.active-filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px 3px 10px;
+  background: #f0f1f4;
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  font-size: 11px;
+  color: var(--text2);
+}
+
+.filter-tag .remove {
+  cursor: pointer;
+  color: var(--text3);
+  font-size: 12px;
+  margin-left: 2px;
+  line-height: 1;
+}
+.filter-tag .remove:hover { color: var(--danger); }
+
+.search-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.clear-all-btn {
+  font-size: 11px;
+  color: var(--text3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s;
+  white-space: nowrap;
+}
+.clear-all-btn:hover { color: var(--danger); }
+
+.save-btn {
+  font-size: 11px;
+  color: var(--text2);
+  background: none;
+  border: 1px solid var(--border2);
+  cursor: pointer;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; gap: 4px;
+  transition: all 0.15s;
+}
+.save-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ===================== FILTER ROW ===================== */
+.filter-row {
+  background: var(--white);
+  border-bottom: 2px solid var(--border);
+  padding: 0 20px;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  position: sticky;
+  top: 48px;
+  z-index: 100;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--text2);
+  white-space: nowrap;
+  transition: all 0.15s;
+  margin-bottom: -2px;
+  font-weight: 500;
+}
+
+.filter-btn:hover { color: var(--accent); background: var(--accent-light); }
+.filter-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.filter-btn .icon {
+  font-size: 15px;
+}
+
+.filter-btn .arrow {
+  font-size: 9px;
+  color: var(--text3);
+  transition: transform 0.15s;
+}
+.filter-btn.active .arrow { transform: rotate(180deg); }
+
+.filter-divider {
+  width: 1px;
+  background: var(--border);
+  margin: 8px 0;
+}
+
+.filter-freeword {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  gap: 8px;
+}
+
+.freeword-input {
+  flex: 1;
+  max-width: 280px;
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 6px 14px 6px 32px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' fill='%239094a8' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 10px center;
+}
+.freeword-input:focus { border-color: var(--accent); }
+.freeword-input::placeholder { color: var(--text4); }
+
+.exclude-input {
+  flex: 1;
+  max-width: 220px;
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.exclude-input:focus { border-color: var(--accent); }
+.exclude-input::placeholder { color: var(--text4); }
+
+/* ===================== DROPDOWN PANEL ===================== */
+.dropdown-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+}
+.dropdown-overlay.show { display: block; }
+
+.dropdown-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-top: none;
+  box-shadow: var(--shadow-lg);
+  z-index: 150;
+  animation: slideDown 0.15s ease;
+}
+.dropdown-panel.show { display: block; }
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Industry Panel */
+.industry-panel {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  max-height: 480px;
+}
+
+.industry-left {
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.industry-left-item {
+  display: flex;
+  align-items: center;
+  padding: 9px 16px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text2);
+  transition: background 0.1s;
+  gap: 8px;
+  border-right: 3px solid transparent;
+}
+.industry-left-item:hover { background: #f8f9fb; }
+.industry-left-item.active { background: var(--accent-light); border-right-color: var(--accent); color: var(--accent); font-weight: 600; }
+
+.industry-left-item .count {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text4);
+  font-family: 'DM Mono', monospace;
+}
+
+.industry-right {
+  overflow-y: auto;
+  padding: 12px 20px;
+}
+
+.industry-right-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.industry-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.industry-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text2);
+  transition: background 0.1s;
+}
+.industry-check:hover { background: #f5f6f8; }
+.industry-check input[type="checkbox"] { accent-color: var(--accent); width: 13px; height: 13px; }
+.industry-check .sub-count { margin-left: auto; font-size: 11px; color: var(--text4); font-family: 'DM Mono', monospace; }
+
+/* Area Panel */
+.area-panel {
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.area-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 6px;
+}
+
+.area-btn {
+  padding: 8px 4px;
+  text-align: center;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text2);
+  background: var(--white);
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.area-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.area-btn.active { border-color: var(--accent); color: var(--white); background: var(--accent); }
+
+.area-region {
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+
+/* Scale Panel */
+.scale-panel {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.scale-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.scale-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scale-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text2);
+  transition: background 0.1s;
+}
+.scale-check:hover { background: #f5f6f8; }
+.scale-check input { accent-color: var(--accent); }
+
+/* ===================== MAIN LAYOUT ===================== */
+.main-layout {
+  display: flex;
+  min-height: calc(100vh - 48px - 44px - 44px);
+}
+
+/* ===================== LEFT SIDEBAR ===================== */
+.left-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background: #f8f9fb;
+}
+
+.sidebar-header-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.info-available {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.info-num {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+}
+
+.info-label { font-size: 11px; color: var(--text3); }
+
+.add-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 7px;
+  background: white;
+  border: 1.5px dashed var(--accent);
+  border-radius: var(--radius);
+  color: var(--accent);
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.add-btn:hover { background: var(--accent-light); }
+
+.sidebar-section {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.sidebar-check-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text2);
+  transition: background 0.1s;
+}
+.sidebar-check:hover { background: #f5f6f8; }
+.sidebar-check input { accent-color: var(--accent); }
+.sidebar-check .sc-count { margin-left: auto; font-size: 10px; color: var(--text4); font-family: 'DM Mono', monospace; }
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 12px;
+  color: var(--text2);
+}
+
+.toggle {
+  width: 36px; height: 20px;
+  background: var(--border2);
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.toggle.on { background: var(--accent); }
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  background: white;
+  border-radius: 50%;
+  top: 2px; left: 2px;
+  transition: left 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle.on::after { left: 18px; }
+
+.toggle-label {
+  font-size: 11px;
+  color: var(--text3);
+  padding: 3px 0;
+}
+
+.add-condition-link {
+  font-size: 11px;
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 3px;
+  padding: 4px 0;
+}
+.add-condition-link:hover { text-decoration: underline; }
+
+.exclude-section {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.exclude-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #fff0f0;
+  border: 1px solid #fcc;
+  border-radius: 20px;
+  font-size: 11px;
+  color: var(--danger);
+  margin-bottom: 4px;
+}
+
+/* ===================== CONTENT AREA ===================== */
+.content-area {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sort bar */
+.sort-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-label { font-size: 11px; color: var(--text3); }
+
+.sort-select {
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 5px 24px 5px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text);
+  background: white;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%239094a8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: border-color 0.15s;
+}
+.sort-select:focus { border-color: var(--accent); }
+
+.sort-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--accent);
+  border: none;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.sort-tag-outline {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: white;
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  font-size: 11px;
+  color: var(--text2);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.sort-tag-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Result cards */
+.results-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+}
+
+.result-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+.result-card:hover { box-shadow: var(--shadow); border-color: var(--border2); }
+.result-card.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(234,96,0,0.12); }
+
+.card-top {
+  display: flex;
+  padding: 14px 16px 10px;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.card-logo {
+  width: 48px; height: 48px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  background: #f8f9fb;
+  flex-shrink: 0;
+  color: var(--text3);
+  font-weight: 700;
+  overflow: hidden;
+}
+
+.card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-breadcrumb {
+  font-size: 10px;
+  color: var(--text3);
+  margin-bottom: 3px;
+}
+.card-breadcrumb a { color: var(--info); text-decoration: none; cursor: pointer; }
+.card-breadcrumb a:hover { text-decoration: underline; }
+
+.card-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-name .stock-badge {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fde68a;
+  font-weight: 600;
+}
+
+.card-info-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.card-info-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.card-info-item .lock-icon { font-size: 11px; }
+
+.contact-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  text-decoration: none;
+}
+.contact-tag:hover { opacity: 0.8; }
+.contact-tag.tel { background: #e8f4fe; color: var(--info); border: 1px solid #bdd8fc; }
+.contact-tag.fax { background: #f0f0f0; color: var(--text3); border: 1px solid var(--border2); }
+.contact-tag.mail { background: #f0faf5; color: var(--success); border: 1px solid #a3e4c4; }
+.contact-tag.web { background: #fef3e8; color: var(--accent); border: 1px solid var(--accent-mid); }
+
+.card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.match-score-box {
+  text-align: right;
+}
+
+.match-label { font-size: 10px; color: var(--text3); }
+.match-num { font-size: 22px; font-weight: 700; color: var(--accent); font-family: 'DM Mono', monospace; }
+.match-pct { font-size: 13px; color: var(--accent); }
+
+.get-info-btn {
+  padding: 7px 16px;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.get-info-btn:hover { background: var(--accent-dark); }
+
+.locked-box {
+  background: #f5f6f8;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  text-align: center;
+  width: 160px;
+}
+
+.locked-box .lock-text {
+  font-size: 10px;
+  color: var(--text3);
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
+.card-bottom {
+  display: flex;
+  padding: 8px 16px;
+  border-top: 1px solid var(--border);
+  background: #fafbfc;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.match-pct-row {
+  font-size: 11px;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.match-pct-num {
+  font-weight: 700;
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+}
+
+.keyword-row {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.keyword-chip {
+  padding: 2px 8px;
+  background: #e8f4fe;
+  color: var(--info);
+  border-radius: 3px;
+  font-size: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.1s;
+}
+.keyword-chip:hover { background: #c5e4fd; }
+
+.office-tags {
+  display: flex;
+  gap: 4px;
+}
+
+.office-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+}
+.office-tag.head { background: #e8f4fe; color: var(--info); border: 1px solid #bdd8fc; }
+.office-tag.branch { background: #f0f0f0; color: var(--text3); border: 1px solid var(--border2); }
+.office-tag.sales { background: #f0faf5; color: var(--success); border: 1px solid #a3e4c4; }
+
+.office-count-badge {
+  width: 18px; height: 18px;
+  background: var(--info);
+  color: white;
+  border-radius: 50%;
+  font-size: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+}
+
+.related-link {
+  font-size: 10px;
+  color: var(--info);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex; align-items: center; gap: 2px;
+}
+.related-link:hover { text-decoration: underline; }
+
+/* ===================== BOTTOM BAR ===================== */
+.bottom-bar {
+  position: sticky;
+  bottom: 0;
+  background: var(--white);
+  border-top: 2px solid var(--border);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+  z-index: 100;
+}
+
+.bottom-count {
+  font-size: 13px;
+  color: var(--text2);
+}
+.bottom-count strong {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+}
+
+.bottom-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.bottom-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+}
+
+.bottom-btn-primary {
+  background: var(--accent);
+  color: white;
+}
+.bottom-btn-primary:hover { background: var(--accent-dark); }
+
+.bottom-btn-outline {
+  background: white;
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+}
+.bottom-btn-outline:hover { background: var(--accent-light); }
+
+/* ===================== MISC ===================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text4); }
+
+.checkbox-main {
+  accent-color: var(--accent);
+  width: 14px; height: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* CSV upload modal */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+
+.modal {
+  background: white;
+  border-radius: 8px;
+  padding: 28px;
+  width: 480px;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.upload-zone {
+  border: 2px dashed var(--border2);
+  border-radius: var(--radius);
+  padding: 36px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.upload-zone:hover { border-color: var(--accent); background: var(--accent-light); }
+
+.upload-zone .upload-icon { font-size: 36px; margin-bottom: 8px; }
+.upload-zone .upload-text { font-size: 13px; color: var(--text2); }
+.upload-zone .upload-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-btn-cancel {
+  padding: 8px 20px;
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--text2);
+  font-size: 13px;
+}
+
+.modal-btn-ok {
+  padding: 8px 20px;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  cursor: pointer;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* highlight search match */
+.highlight { color: var(--accent); font-weight: 700; }
+
 </style>
 </head>
 <body>
 
 <!-- GLOBAL NAV -->
 <nav class="global-nav">
-  <div class="nav-logo">
-    <div class="nav-logo-icon">営</div>
-    <span class="nav-logo-text">社内リストツール</span>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">社</div>
+    <span class="nav-logo-text">社内リスト</span>
+  </a>
+  <div class="nav-tabs">
+    <a class="nav-tab active">企業検索</a>
+    <a class="nav-tab">企業リスト</a>
+    <a class="nav-tab">アプローチ管理</a>
+    <a class="nav-tab">メール配信</a>
+    <a class="nav-tab">成約分析</a>
   </div>
-  <div class="nav-tab active">企業検索</div>
   <div class="nav-right">
-    <span class="nav-count" id="navCount">データ未読込</span>
-    <label class="nav-upload-btn" for="csvInput">
-      ⬆ CSVを読み込む
-      <input type="file" id="csvInput" accept=".csv" style="display:none" onchange="loadCSV(event)">
-    </label>
+    <button class="nav-icon-btn" title="ヘルプ">?</button>
+    <label class="nav-icon-btn" title="CSVアップロード" for="csvFileInput" style="cursor:pointer;" onclick="openModal()">⬆</label>
+    <div class="nav-user">
+      <div class="nav-avatar">田</div>
+      <span>田中 太郎</span>
+      <span style="font-size:9px; opacity:0.6;">▾</span>
+    </div>
   </div>
 </nav>
 
-<!-- FILTER STRIP -->
-<div class="filter-strip" id="filterStrip">
-  <div class="hit-badge">該当件数 <strong id="hitCount">0</strong> 件</div>
-  <div class="search-wrap">
-    <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/></svg>
-    <input class="search-input" id="searchInput" type="text" placeholder="会社名・キーワードで検索..." oninput="doFilter()">
-  </div>
-  <button class="filter-chip-btn" id="btnIndustry" onclick="toggleDD('industry')">
-    🏭 業界 <span class="arrow">▾</span>
-  </button>
-  <button class="filter-chip-btn" id="btnArea" onclick="toggleDD('area')">
-    📍 都道府県 <span class="arrow">▾</span>
-  </button>
-  <button class="filter-chip-btn" id="btnScale" onclick="toggleDD('scale')">
-    📊 企業規模 <span class="arrow">▾</span>
-  </button>
-  <button class="filter-chip-btn" id="btnContact" onclick="toggleDD('contact')">
-    📞 連絡先 <span class="arrow">▾</span>
-  </button>
-  <button class="filter-chip-btn" id="btnStatus" onclick="toggleDD('status')">
-    🔖 ステータス <span class="arrow">▾</span>
-  </button>
-  <div id="activeTags" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
-  <button class="clear-btn" onclick="clearAll()">✕ クリア</button>
-</div>
+<!-- FILTER ROW (sticky) -->
+<div style="position:sticky;top:48px;z-index:100;">
 
-<!-- DROPDOWN WRAPPER -->
-<div class="dd-wrapper">
-  <!-- 業界 -->
-  <div class="dd-panel" id="dd-industry">
-    <div class="dd-inner" id="industryChecks"></div>
-    <div class="dd-footer">
-      <button class="dd-cancel" onclick="closeDD()">キャンセル</button>
-      <button class="dd-apply" onclick="applyDD('industry')">この条件で絞り込む</button>
+  <!-- SEARCH BAR -->
+  <div class="search-bar">
+    <div class="hit-count">該当件数 <strong id="hitCount">560</strong> 件</div>
+    <div class="active-filters" id="activeFilters">
+      <div class="filter-tag">対象：本社 <span class="remove" onclick="removeFilter(this)">×</span></div>
+      <div class="filter-tag">東京都 <span class="remove" onclick="removeFilter(this)">×</span></div>
+      <div class="filter-tag" id="kwFilterTag" style="display:none">フリーワード：<span id="kwFilterText"></span> <span class="remove" onclick="removeKwFilter()">×</span></div>
+    </div>
+    <div class="search-bar-right">
+      <button class="clear-all-btn" onclick="clearAll()">✕ 全てクリア</button>
+      <button class="save-btn">💾 保存</button>
+      <button class="save-btn" onclick="openModal()">⬆ CSV読込</button>
     </div>
   </div>
-  <!-- 都道府県 -->
-  <div class="dd-panel" id="dd-area">
-    <div class="dd-inner" id="areaChecks"></div>
-    <div class="dd-footer">
-      <button class="dd-cancel" onclick="closeDD()">キャンセル</button>
-      <button class="dd-apply" onclick="applyDD('area')">この条件で絞り込む</button>
+
+  <!-- FILTER BUTTONS -->
+  <div class="filter-row" id="filterRow">
+    <button class="filter-btn" id="btnIndustry" onclick="toggleDropdown('industry')">
+      <span class="icon">🏭</span> 業界・事業内容から絞り込む <span class="arrow">▾</span>
+    </button>
+    <div class="filter-divider"></div>
+    <button class="filter-btn" id="btnArea" onclick="toggleDropdown('area')">
+      <span class="icon">📍</span> 都道府県・地域から絞り込む <span class="arrow">▾</span>
+    </button>
+    <div class="filter-divider"></div>
+    <button class="filter-btn" id="btnScale" onclick="toggleDropdown('scale')">
+      <span class="icon">📊</span> 企業規模・売上から絞り込む <span class="arrow">▾</span>
+    </button>
+    <div class="filter-divider"></div>
+    <button class="filter-btn" id="btnOther" onclick="toggleDropdown('other')">
+      <span class="icon">⚡</span> 動向情報・その他から絞り込む <span class="arrow">▾</span>
+    </button>
+    <div class="filter-divider"></div>
+    <div class="filter-freeword">
+      <input class="freeword-input" type="text" placeholder="フリーワード検索" id="freewordInput" oninput="handleFreeword(this.value)">
+      <input class="exclude-input" type="text" placeholder="除外ワード検索">
     </div>
-  </div>
-  <!-- 企業規模 -->
-  <div class="dd-panel" id="dd-scale">
-    <div class="dd-inner">
-      <div class="dd-section">
-        <div class="dd-title">従業員数</div>
-        <div class="dd-checks" id="empChecks"></div>
-      </div>
-      <div class="dd-section">
-        <div class="dd-title">上場種別</div>
-        <div class="dd-checks" id="stockChecks"></div>
-      </div>
-    </div>
-    <div class="dd-footer">
-      <button class="dd-cancel" onclick="closeDD()">キャンセル</button>
-      <button class="dd-apply" onclick="applyDD('scale')">この条件で絞り込む</button>
-    </div>
-  </div>
-  <!-- 連絡先 -->
-  <div class="dd-panel" id="dd-contact">
-    <div class="dd-inner">
-      <div class="dd-section">
-        <div class="dd-title">連絡先の有無</div>
-        <div class="dd-checks">
-          <label class="dd-check"><input type="checkbox" id="f_tel"> 電話番号あり</label>
-          <label class="dd-check"><input type="checkbox" id="f_fax"> FAX番号あり</label>
-          <label class="dd-check"><input type="checkbox" id="f_mail"> メールアドレスあり</label>
-          <label class="dd-check"><input type="checkbox" id="f_recruit_mail"> 採用メールあり</label>
-          <label class="dd-check"><input type="checkbox" id="f_inquiry"> お問い合わせページあり</label>
+
+    <!-- DROPDOWN PANELS -->
+    <div class="dropdown-panel" id="panel-industry" style="position:absolute;left:0;right:0;top:100%;">
+      <div class="industry-panel">
+        <div class="industry-left">
+          <div class="industry-left-item active" onclick="selectIndustryCategory(this, '建設・工事業界')">
+            建設・工事業界 <span class="count">239,532</span>
+          </div>
+          <div class="industry-left-item" onclick="selectIndustryCategory(this, '小売業界')">
+            小売業界 <span class="count">67,393</span>
+          </div>
+          <div class="industry-left-item" onclick="selectIndustryCategory(this, '不動産業界')">
+            不動産業界 <span class="count">63,956</span>
+          </div>
+          <div class="industry-left-item" onclick="selectIndustryCategory(this, 'IT業界')">
+            IT業界 <span class="count">27,832</span>
+          </div>
+          <div class="industry-left-item" onclick="selectIndustryCategory(this, '製造業界')">
+            製造業界 <span class="count">51,574</span>
+          </div>
+          <div class="industry-left-item" onclick="selectIndustryCategory(this, '医療・福祉業界')">
+            医療・福祉業界 <span class="count">34,203</span>
+          </div>
+          <div class="industry-left-item" onclick="selectIndustryCategory(this, 'コンサルティング業界')">
+            コンサルティング業界 <span class="count">34,678</span>
+          </div>
+          <div class="industry-left-item" onclick="selectIndustryCategory(this, '食品業界')">
+            食品業界 <span class="count">44,013</span>
+          </div>
+          <div class="industry-left-item" onclick="selectIndustryCategory(this, '金融・保険業界')">
+            金融・保険業界 <span class="count">21,044</span>
+          </div>
+          <div class="industry-left-item" onclick="selectIndustryCategory(this, '広告業界')">
+            広告業界 <span class="count">20,650</span>
+          </div>
+        </div>
+        <div class="industry-right" id="industryRight">
+          <div class="industry-right-title" id="industryRightTitle">建設・工事業界 — 小分類</div>
+          <div class="industry-grid" id="industryGrid">
+            <label class="industry-check"><input type="checkbox"> その他土木工事業界 <span class="sub-count">35,599</span></label>
+            <label class="industry-check"><input type="checkbox"> 居住用リフォーム業界 <span class="sub-count">19,645</span></label>
+            <label class="industry-check"><input type="checkbox"> その他建造物建築業界 <span class="sub-count">15,344</span></label>
+            <label class="industry-check"><input type="checkbox"> その他電気設備工事業界 <span class="sub-count">13,172</span></label>
+            <label class="industry-check"><input type="checkbox"> 産業用電気設備工事業界 <span class="sub-count">8,310</span></label>
+            <label class="industry-check"><input type="checkbox"> 空調設備工事業界 <span class="sub-count">6,671</span></label>
+            <label class="industry-check"><input type="checkbox"> 窯業系建材・石材製造業界 <span class="sub-count">5,967</span></label>
+            <label class="industry-check"><input type="checkbox"> 交通関連土木工事業界 <span class="sub-count">5,732</span></label>
+            <label class="industry-check"><input type="checkbox"> 通信設備工事業界 <span class="sub-count">4,019</span></label>
+            <label class="industry-check"><input type="checkbox"> 建造物解体工事業界 <span class="sub-count">3,621</span></label>
+            <label class="industry-check"><input type="checkbox"> 事業用リフォーム業界 <span class="sub-count">2,780</span></label>
+            <label class="industry-check"><input type="checkbox"> 太陽光パネル業界 <span class="sub-count">1,882</span></label>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="dd-footer">
-      <button class="dd-cancel" onclick="closeDD()">キャンセル</button>
-      <button class="dd-apply" onclick="applyDD('contact')">この条件で絞り込む</button>
-    </div>
-  </div>
-  <!-- ステータス -->
-  <div class="dd-panel" id="dd-status">
-    <div class="dd-inner">
-      <div class="dd-section">
-        <div class="dd-title">架電ステータス</div>
-        <div class="dd-checks">
-          <label class="dd-check"><input type="checkbox" value="未架電" class="status-filter-cb"> 未架電</label>
-          <label class="dd-check"><input type="checkbox" value="折返待ち" class="status-filter-cb"> 折返待ち</label>
-          <label class="dd-check"><input type="checkbox" value="アポ済" class="status-filter-cb"> アポ済</label>
-          <label class="dd-check"><input type="checkbox" value="NG" class="status-filter-cb"> NG</label>
-          <label class="dd-check"><input type="checkbox" value="保留" class="status-filter-cb"> 保留</label>
-        </div>
+      <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">
+        <button onclick="closeDropdown()" style="padding:7px 16px;background:none;border:1px solid var(--border2);border-radius:4px;font-family:inherit;cursor:pointer;font-size:12px;color:var(--text2);">キャンセル</button>
+        <button onclick="applyFilter('industry')" style="padding:7px 20px;background:var(--accent);border:none;border-radius:4px;font-family:inherit;cursor:pointer;font-size:12px;font-weight:700;color:white;">この条件で絞り込む</button>
       </div>
     </div>
-    <div class="dd-footer">
-      <button class="dd-cancel" onclick="closeDD()">キャンセル</button>
-      <button class="dd-apply" onclick="applyDD('status')">この条件で絞り込む</button>
+
+    <div class="dropdown-panel" id="panel-area" style="position:absolute;left:0;right:0;top:100%;">
+      <div class="area-panel">
+        <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:12px;">都道府県を選択</div>
+        <div class="area-grid" id="areaGrid">
+          <button class="area-btn active" onclick="toggleArea(this)">北海道</button>
+          <button class="area-btn" onclick="toggleArea(this)">青森県</button>
+          <button class="area-btn" onclick="toggleArea(this)">岩手県</button>
+          <button class="area-btn" onclick="toggleArea(this)">宮城県</button>
+          <button class="area-btn" onclick="toggleArea(this)">秋田県</button>
+          <button class="area-btn" onclick="toggleArea(this)">山形県</button>
+          <button class="area-btn" onclick="toggleArea(this)">福島県</button>
+          <button class="area-btn active" onclick="toggleArea(this)">東京都</button>
+          <button class="area-btn" onclick="toggleArea(this)">神奈川県</button>
+          <button class="area-btn" onclick="toggleArea(this)">埼玉県</button>
+          <button class="area-btn" onclick="toggleArea(this)">千葉県</button>
+          <button class="area-btn" onclick="toggleArea(this)">茨城県</button>
+          <button class="area-btn" onclick="toggleArea(this)">栃木県</button>
+          <button class="area-btn" onclick="toggleArea(this)">群馬県</button>
+          <button class="area-btn" onclick="toggleArea(this)">山梨県</button>
+          <button class="area-btn" onclick="toggleArea(this)">長野県</button>
+          <button class="area-btn" onclick="toggleArea(this)">静岡県</button>
+          <button class="area-btn" onclick="toggleArea(this)">愛知県</button>
+          <button class="area-btn" onclick="toggleArea(this)">岐阜県</button>
+          <button class="area-btn" onclick="toggleArea(this)">三重県</button>
+          <button class="area-btn" onclick="toggleArea(this)">大阪府</button>
+          <button class="area-btn" onclick="toggleArea(this)">兵庫県</button>
+          <button class="area-btn" onclick="toggleArea(this)">京都府</button>
+          <button class="area-btn" onclick="toggleArea(this)">奈良県</button>
+          <button class="area-btn" onclick="toggleArea(this)">滋賀県</button>
+          <button class="area-btn" onclick="toggleArea(this)">和歌山県</button>
+          <button class="area-btn" onclick="toggleArea(this)">広島県</button>
+          <button class="area-btn" onclick="toggleArea(this)">岡山県</button>
+          <button class="area-btn" onclick="toggleArea(this)">福岡県</button>
+          <button class="area-btn" onclick="toggleArea(this)">熊本県</button>
+          <button class="area-btn" onclick="toggleArea(this)">沖縄県</button>
+        </div>
+      </div>
+      <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">
+        <button onclick="closeDropdown()" style="padding:7px 16px;background:none;border:1px solid var(--border2);border-radius:4px;font-family:inherit;cursor:pointer;font-size:12px;color:var(--text2);">キャンセル</button>
+        <button onclick="applyFilter('area')" style="padding:7px 20px;background:var(--accent);border:none;border-radius:4px;font-family:inherit;cursor:pointer;font-size:12px;font-weight:700;color:white;">この条件で絞り込む</button>
+      </div>
+    </div>
+
+    <div class="dropdown-panel" id="panel-scale" style="position:absolute;left:0;right:0;top:100%;">
+      <div class="scale-panel">
+        <div>
+          <div class="scale-section-title">従業員数</div>
+          <div class="scale-checks">
+            <label class="scale-check"><input type="checkbox"> 1〜5名</label>
+            <label class="scale-check"><input type="checkbox"> 6〜10名</label>
+            <label class="scale-check"><input type="checkbox"> 11〜30名</label>
+            <label class="scale-check"><input type="checkbox" checked> 31〜100名</label>
+            <label class="scale-check"><input type="checkbox" checked> 101〜300名</label>
+            <label class="scale-check"><input type="checkbox"> 301〜1000名</label>
+            <label class="scale-check"><input type="checkbox"> 1001名以上</label>
+          </div>
+        </div>
+        <div>
+          <div class="scale-section-title">売上高</div>
+          <div class="scale-checks">
+            <label class="scale-check"><input type="checkbox"> 〜1億円未満</label>
+            <label class="scale-check"><input type="checkbox"> 1〜5億円</label>
+            <label class="scale-check"><input type="checkbox" checked> 5〜10億円</label>
+            <label class="scale-check"><input type="checkbox" checked> 10〜50億円</label>
+            <label class="scale-check"><input type="checkbox"> 50〜100億円</label>
+            <label class="scale-check"><input type="checkbox"> 100億円以上</label>
+          </div>
+          <div style="margin-top:16px;">
+            <div class="scale-section-title">上場種別</div>
+            <div class="scale-checks">
+              <label class="scale-check"><input type="checkbox"> 東証プライム</label>
+              <label class="scale-check"><input type="checkbox"> 東証スタンダード</label>
+              <label class="scale-check"><input type="checkbox"> 東証グロース</label>
+              <label class="scale-check"><input type="checkbox" checked> 未上場</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">
+        <button onclick="closeDropdown()" style="padding:7px 16px;background:none;border:1px solid var(--border2);border-radius:4px;font-family:inherit;cursor:pointer;font-size:12px;color:var(--text2);">キャンセル</button>
+        <button onclick="applyFilter('scale')" style="padding:7px 20px;background:var(--accent);border:none;border-radius:4px;font-family:inherit;cursor:pointer;font-size:12px;font-weight:700;color:white;">この条件で絞り込む</button>
+      </div>
+    </div>
+
+    <div class="dropdown-panel" id="panel-other" style="position:absolute;left:0;right:0;top:100%;">
+      <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
+        <div>
+          <div class="scale-section-title">連絡先情報</div>
+          <div class="scale-checks">
+            <label class="scale-check"><input type="checkbox" checked> 電話番号あり</label>
+            <label class="scale-check"><input type="checkbox"> FAX番号あり</label>
+            <label class="scale-check"><input type="checkbox"> メールアドレスあり</label>
+            <label class="scale-check"><input type="checkbox"> 採用メールあり</label>
+            <label class="scale-check"><input type="checkbox"> お問い合わせページあり</label>
+          </div>
+        </div>
+        <div>
+          <div class="scale-section-title">最近の動向</div>
+          <div class="scale-checks">
+            <label class="scale-check"><input type="checkbox"> 求人あり（過去1ヶ月）</label>
+            <label class="scale-check"><input type="checkbox"> プレスリリースあり</label>
+            <label class="scale-check"><input type="checkbox"> 求人数が増加</label>
+          </div>
+          <div style="margin-top:12px;">
+            <div class="scale-section-title">設立年月</div>
+            <div style="display:flex;gap:6px;align-items:center;font-size:12px;color:var(--text2);">
+              <input type="number" placeholder="2000" style="width:70px;border:1px solid var(--border2);border-radius:4px;padding:5px 8px;font-size:12px;font-family:inherit;outline:none;">
+              <span>年 〜</span>
+              <input type="number" placeholder="2024" style="width:70px;border:1px solid var(--border2);border-radius:4px;padding:5px 8px;font-size:12px;font-family:inherit;outline:none;">
+              <span>年</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="scale-section-title">事業所情報</div>
+          <div class="scale-checks">
+            <label class="scale-check"><input type="checkbox"> 工場あり</label>
+            <label class="scale-check"><input type="checkbox"> 店舗あり</label>
+          </div>
+          <div style="margin-top:12px;font-size:11px;color:var(--text3);">
+            事業所数
+            <div style="display:flex;gap:6px;align-items:center;margin-top:4px;font-size:12px;color:var(--text2);">
+              <input type="number" placeholder="1" style="width:60px;border:1px solid var(--border2);border-radius:4px;padding:5px 8px;font-size:12px;font-family:inherit;outline:none;">
+              <span>件 〜</span>
+              <input type="number" placeholder="999" style="width:60px;border:1px solid var(--border2);border-radius:4px;padding:5px 8px;font-size:12px;font-family:inherit;outline:none;">
+              <span>件</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">
+        <button onclick="closeDropdown()" style="padding:7px 16px;background:none;border:1px solid var(--border2);border-radius:4px;font-family:inherit;cursor:pointer;font-size:12px;color:var(--text2);">キャンセル</button>
+        <button onclick="applyFilter('other')" style="padding:7px 20px;background:var(--accent);border:none;border-radius:4px;font-family:inherit;cursor:pointer;font-size:12px;font-weight:700;color:white;">この条件で絞り込む</button>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- MAIN LAYOUT -->
-<div class="layout">
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sb-section">
-      <div class="sb-title">対象企業</div>
-      <label class="sb-check"><input type="checkbox" id="sb_honsha" checked onchange="doFilter()"> 本社 <span class="sb-cnt" id="cnt_honsha">0</span></label>
-      <label class="sb-check"><input type="checkbox" id="sb_jigyosho" onchange="doFilter()"> 事業所 <span class="sb-cnt" id="cnt_jigyosho">0</span></label>
-    </div>
-    <div class="sb-section">
-      <div class="sb-title">連絡先の有無</div>
-      <label class="sb-check"><input type="checkbox" id="sb_tel" onchange="doFilter()"> 電話番号 <span class="sb-cnt" id="sb_cnt_tel">0</span></label>
-      <label class="sb-check"><input type="checkbox" id="sb_mail2" onchange="doFilter()"> メールアドレス <span class="sb-cnt" id="sb_cnt_mail">0</span></label>
-      <label class="sb-check"><input type="checkbox" id="sb_fax2" onchange="doFilter()"> FAX番号 <span class="sb-cnt" id="sb_cnt_fax">0</span></label>
-      <div class="toggle-row">
-        <span>AND</span>
-        <div class="toggle on" id="andorToggle" onclick="this.classList.toggle('on');doFilter()"></div>
-        <span>OR</span>
+<div class="main-layout">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="left-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-header-title">情報取得可能数</div>
+      <div class="info-available">
+        <span class="info-num">554</span>
+        <span class="info-label">件</span>
       </div>
-    </div>
-    <div class="sb-section">
-      <div class="sb-title">除外</div>
-      <label class="sb-check"><input type="checkbox" id="sb_exNG" onchange="doFilter()"> NGを除外</label>
-    </div>
-    <div style="padding:12px 14px;">
-      <button onclick="clearAll()" style="width:100%;padding:7px;background:none;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;font-size:12px;color:var(--text3);cursor:pointer;">条件をリセット</button>
-    </div>
-  </div>
-
-  <!-- CONTENT -->
-  <div class="content">
-    <div class="sort-bar">
-      <span style="font-size:11px;color:var(--text3);">並べ替え：</span>
-      <select class="sort-sel" id="sortSel" onchange="doFilter()">
-        <option value="default">デフォルト</option>
-        <option value="match_desc">マッチ度（高い順）</option>
-        <option value="emp_desc">従業員数（多い順）</option>
-        <option value="emp_asc">従業員数（少ない順）</option>
-        <option value="name_asc">会社名（50音順）</option>
-      </select>
-      <button class="sel-all-btn" onclick="toggleSelectAll()" id="selAllBtn">☐ 全選択</button>
-      <button class="export-btn" onclick="exportCSV()">↓ CSV出力</button>
-      <span class="result-cnt"><span id="resultCnt">0</span> 件表示中</span>
+      <div style="font-size:10px;color:var(--text3);margin-top:2px;">次回更新日：2024年06月15日</div>
+      <button class="add-btn">＋ 件数を追加購入</button>
     </div>
 
-    <div class="cards-wrap" id="cardsWrap">
-      <!-- EMPTY STATE -->
-      <div class="empty" id="emptyState">
-        <div class="empty-icon">📋</div>
-        <div class="empty-title">CSVファイルを読み込んでください</div>
-        <div class="empty-sub">右上の「CSVを読み込む」ボタンから<br>musubu等でダウンロードしたCSVをアップロードしてください</div>
-        <label class="upload-zone-big" for="csvInput2">
-          <div class="uz-icon">⬆</div>
-          <div class="uz-text">CSVをここにドロップ、またはクリックして選択</div>
-          <div class="uz-sub">UTF-8 / Shift-JIS 対応</div>
-          <input type="file" id="csvInput2" accept=".csv" style="display:none" onchange="loadCSV(event)">
+    <div style="padding:6px 16px;background:#f8f9fb;border-bottom:1px solid var(--border);">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase;padding:6px 0 4px;">フィルターメニュー</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">対象企業</div>
+      <div class="sidebar-check-group">
+        <label class="sidebar-check">
+          <input type="checkbox" checked> 本社
+          <span class="sc-count">560</span>
+        </label>
+        <label class="sidebar-check">
+          <input type="checkbox"> 事業所
+          <span class="sc-count">18</span>
+          <span style="font-size:10px;color:var(--accent);margin-left:2px;cursor:pointer;">＋</span>
         </label>
       </div>
     </div>
 
-    <div class="pagination" id="paginationBar" style="display:none">
-      <div class="page-info" id="pageInfo"></div>
-      <div class="page-btns" id="pageBtns"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">連絡先情報の有無</div>
+      <div class="sidebar-check-group">
+        <label class="sidebar-check"><input type="checkbox" checked> 電話番号 <span class="sc-count">487</span></label>
+        <label class="sidebar-check"><input type="checkbox"> FAX番号 <span class="sc-count">312</span></label>
+        <label class="sidebar-check"><input type="checkbox"> メールアドレス <span class="sc-count">143</span></label>
+        <label class="sidebar-check"><input type="checkbox"> お問い合わせページ <span class="sc-count">221</span></label>
+        <label class="sidebar-check"><input type="checkbox"> 採用メールアドレス <span class="sc-count">78</span></label>
+      </div>
+      <div class="toggle-row" style="margin-top:8px;">
+        <span style="font-size:12px;color:var(--text2);">検索方法の指定</span>
+        <span style="font-size:10px;color:var(--text3);">AND</span>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        <span style="font-size:10px;color:var(--text3);">OR</span>
+      </div>
     </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">過去1ヶ月以内の新着動向</div>
+      <div class="sidebar-check-group">
+        <label class="sidebar-check"><input type="checkbox"> 求人 <span class="sc-count">89</span></label>
+        <label class="sidebar-check"><input type="checkbox"> プレスリリース <span class="sc-count">12</span></label>
+      </div>
+      <a class="add-condition-link" style="margin-top:6px;">＋ 動向情報の検索条件を追加</a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">除外項目</div>
+      <div class="sidebar-check-group">
+        <label class="sidebar-check"><input type="checkbox" checked> 閉鎖している企業 <span class="sc-count">34</span></label>
+        <label class="sidebar-check"><input type="checkbox"> リスト追加済み企業</label>
+      </div>
+    </div>
+
+    <div style="padding:12px 16px;">
+      <button style="width:100%;padding:9px;background:var(--accent);border:none;border-radius:var(--radius);font-family:inherit;font-size:13px;font-weight:700;color:white;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='var(--accent-dark)'" onmouseout="this.style.background='var(--accent)'">
+        🔍 絞り込みを適用
+      </button>
+      <button style="width:100%;margin-top:6px;padding:7px;background:none;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;font-size:12px;color:var(--text3);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.color='var(--text2)'" onmouseout="this.style.color='var(--text3)'">
+        条件をリセット
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div class="content-area">
+
+    <!-- Sort bar -->
+    <div class="sort-bar">
+      <span class="sort-label">並べ替え：</span>
+      <select class="sort-select">
+        <option>従業員数順</option>
+        <option>マッチ度順</option>
+        <option>売上高順</option>
+        <option>設立年月順</option>
+      </select>
+      <button class="sort-tag">降順 ▾</button>
+      <button class="sort-tag-outline">昇順</button>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+        <span style="font-size:11px;color:var(--text3);">表示件数：</span>
+        <select class="sort-select">
+          <option>20件</option>
+          <option>50件</option>
+          <option>100件</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Result cards -->
+    <div class="results-container" id="resultsContainer">
+      <!-- Cards injected by JS -->
+    </div>
+
   </div>
 </div>
 
 <!-- BOTTOM BAR -->
 <div class="bottom-bar">
-  <div class="bottom-count">企業検索：<strong id="bottomCount">0</strong> 社</div>
-  <button class="bottom-dl" onclick="exportCSV()">⬇ リストをダウンロード（CSV）</button>
+  <div class="bottom-count">企業検索：<strong id="bottomCount">560</strong> 社</div>
+  <div class="bottom-actions">
+    <button class="bottom-btn bottom-btn-outline" onclick="exportCsv()">
+      ⬇ リストをダウンロード
+    </button>
+    <button class="bottom-btn bottom-btn-primary">
+      📋 リストに追加して管理
+    </button>
+  </div>
+</div>
+
+<!-- CSV MODAL -->
+<div class="modal-overlay" id="csvModal">
+  <div class="modal">
+    <div class="modal-title">📂 CSVファイルを読み込む</div>
+    <label class="upload-zone" for="csvFileInput">
+      <div class="upload-icon">📄</div>
+      <div class="upload-text">CSVファイルをドラッグ&ドロップ<br>またはクリックして選択</div>
+      <div class="upload-sub">文字コード：UTF-8 / Shift-JIS 対応</div>
+      <input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="handleCsvLoad(event)">
+    </label>
+    <div style="margin-top:12px;padding:10px 14px;background:#f8f9fb;border-radius:var(--radius);font-size:11px;color:var(--text3);line-height:1.7;">
+      <strong style="color:var(--text2);">対応カラム（一部）：</strong><br>
+      会社名 / 電話番号 / 住所（都道府県）/ メイン大業界 / 従業員数 / 売上高 / 上場種別 / 代表者名 / 一言説明 / 事業内容キーワード など
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn-cancel" onclick="closeModal()">キャンセル</button>
+      <button class="modal-btn-ok" onclick="closeModal()">読み込む</button>
+    </div>
+  </div>
 </div>
 
 <script>
-// =============================================
-// STATE
-// =============================================
-let allData = [];           // 全CSVデータ
-let filtered = [];          // フィルター後
-let selected = new Set();   // 選択済みインデックス（filtered内）
-let callData = {};          // {法人番号orインデックス: {status, memo}}
-let currentPage = 1;
-const PAGE_SIZE = 20;
-let activeDD = null;
+// ===================== STATE =====================
+let allData = [];
+let filtered = [];
+let selectedCards = new Set();
+let callData = {};
+let currentKw = '';
+let activePanel = null;
 
 // フィルター状態
 const filters = {
-  kw: '',
   industries: new Set(),
   areas: new Set(),
   empRanges: new Set(),
-  stocks: new Set(),
-  contact: { tel: false, fax: false, mail: false, recruit_mail: false, inquiry: false },
-  statuses: new Set()
+  stocks: new Set()
 };
 
-// =============================================
-// CSV PARSER（PapaParseなしで自前実装）
-// =============================================
-function parseCSV(text) {
-  const lines = text.split(/\r?\n/);
-  if (lines.length < 2) return [];
+const LOGO_COLORS = ['#ea6000','#3b82f6','#2aab6e','#8b5cf6','#f59e0b','#ef4444','#0ea5e9','#ec4899'];
 
-  // musubu CSV対応：「会社名」を含む行をヘッダーとして自動検出
-  let headerIdx = 0;
-  for (let i = 0; i < Math.min(10, lines.length); i++) {
-    if (lines[i].includes('会社名') && lines[i].includes('電話番号')) {
-      headerIdx = i;
-      break;
-    }
+// ===================== CSV PARSER =====================
+function decodeCSV(buffer) {
+  const arr = new Uint8Array(buffer);
+  if (arr[0] === 0xEF && arr[1] === 0xBB && arr[2] === 0xBF) {
+    return new TextDecoder('utf-8').decode(buffer);
   }
+  try {
+    const sjis = new TextDecoder('shift-jis').decode(buffer);
+    const repCount = (sjis.match(/\uFFFD/g) || []).length;
+    if (repCount < sjis.length * 0.005) return sjis;
+  } catch(e) {}
+  return new TextDecoder('utf-8').decode(buffer);
+}
 
-  const headers = parseCSVLine(lines[headerIdx]);
+function parseCSVFull(text) {
+  const result = [];
+  let i = 0;
+  const n = text.length;
+  while (i < n) {
+    const row = [];
+    while (i < n) {
+      let field = '';
+      if (text[i] === '"') {
+        i++;
+        while (i < n) {
+          if (text[i] === '"') {
+            if (i + 1 < n && text[i+1] === '"') { field += '"'; i += 2; }
+            else { i++; break; }
+          } else { field += text[i]; i++; }
+        }
+      } else {
+        while (i < n && text[i] !== ',' && text[i] !== '\r' && text[i] !== '\n') {
+          field += text[i]; i++;
+        }
+      }
+      row.push(field);
+      if (i < n && text[i] === ',') { i++; } else { break; }
+    }
+    if (i < n && text[i] === '\r') i++;
+    if (i < n && text[i] === '\n') i++;
+    if (row.length > 0 && row.some(v => v.trim())) result.push(row);
+  }
+  return result;
+}
+
+function parseCSV(text) {
+  const allRows = parseCSVFull(text);
+  if (allRows.length < 2) return [];
+  let headerIdx = -1;
+  for (let i = 0; i < Math.min(10, allRows.length); i++) {
+    const joined = allRows[i].join(',');
+    if (joined.includes('会社名') && joined.includes('電話番号')) { headerIdx = i; break; }
+  }
+  if (headerIdx === -1) return [];
+  const headers = allRows[headerIdx].map(h => h.trim());
   const rows = [];
-  for (let i = headerIdx + 1; i < lines.length; i++) {
-    if (!lines[i].trim()) continue;
-    const vals = parseCSVLine(lines[i]);
-    // 全フィールドが空の行はスキップ
-    if (vals.every(v => !v.trim())) continue;
+  for (let i = headerIdx + 1; i < allRows.length; i++) {
+    const vals = allRows[i];
+    if (!vals.length || vals.every(v => !v.trim())) continue;
     const obj = {};
-    headers.forEach((h, idx) => { obj[h.trim()] = (vals[idx] || '').trim(); });
-    // 会社名がない行はスキップ
+    headers.forEach((h, idx) => { obj[h] = (vals[idx] || '').trim(); });
     if (!obj['会社名']) continue;
     rows.push(obj);
   }
   return rows;
 }
 
-function parseCSVLine(line) {
-  const result = [];
-  let cur = '';
-  let inQ = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
-    if (c === '"') {
-      if (inQ && line[i+1] === '"') { cur += '"'; i++; }
-      else { inQ = !inQ; }
-    } else if (c === ',' && !inQ) {
-      result.push(cur); cur = '';
-    } else {
-      cur += c;
-    }
-  }
-  result.push(cur);
-  return result;
-}
-
-function decodeCSV(buffer) {
-  // UTF-8 BOM check
-  const arr = new Uint8Array(buffer);
-  if (arr[0] === 0xEF && arr[1] === 0xBB && arr[2] === 0xBF) {
-    return new TextDecoder('utf-8').decode(buffer);
-  }
-  // Shift-JIS試行
-  try {
-    const sjis = new TextDecoder('shift-jis').decode(buffer);
-    // 文字化けチェック（置換文字が多すぎる場合はUTF-8とみなす）
-    const repCount = (sjis.match(/\uFFFD/g) || []).length;
-    if (repCount < sjis.length * 0.01) return sjis;
-  } catch(e) {}
-  return new TextDecoder('utf-8').decode(buffer);
-}
-
-// =============================================
-// CSV LOAD
-// =============================================
-function loadCSV(e) {
+// ===================== CSV LOAD =====================
+function handleCsvLoad(e) {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = (ev) => {
     const text = decodeCSV(ev.target.result);
-    allData = parseCSV(text);
-    if (allData.length === 0) {
-      alert('データが読み込めませんでした。CSVの形式を確認してください。');
+    const data = parseCSV(text);
+    if (data.length === 0) {
+      alert('データを読み込めませんでした。\nCSVのカラムに「会社名」と「電話番号」が含まれているか確認してください。');
       return;
     }
-    // localStorage から架電データ復元
+    allData = data;
     loadCallData();
     buildDynamicFilters();
-    doFilter();
-    document.getElementById('emptyState').style.display = 'none';
-    document.getElementById('navCount').textContent = `${allData.length.toLocaleString()}件 読込済`;
-    updateSidebarCounts();
     closeModal();
+    // ヘッダーに件数表示
+    document.querySelector('.nav-count') && (document.querySelector('.nav-count').textContent = allData.length.toLocaleString() + '件 読込済');
+    doFilter();
   };
   reader.readAsArrayBuffer(file);
 }
 
-// =============================================
-// DYNAMIC FILTER BUILD
-// =============================================
+// ===================== DYNAMIC FILTERS =====================
 function buildDynamicFilters() {
-  // 業界
+  // 業界（左カラム）
   const industries = [...new Set(allData.map(r => r['メイン大業界']).filter(Boolean))].sort();
-  const icEl = document.getElementById('industryChecks');
-  icEl.innerHTML = '';
-  const col1 = document.createElement('div'); col1.className = 'dd-section';
-  col1.innerHTML = '<div class="dd-title">業界（大分類）</div><div class="dd-checks" id="indChecks1"></div>';
-  icEl.appendChild(col1);
-  const c1 = document.getElementById('indChecks1');
-  industries.forEach(ind => {
-    const cnt = allData.filter(r => r['メイン大業界'] === ind).length;
-    const label = document.createElement('label');
-    label.className = 'dd-check';
-    label.innerHTML = `<input type="checkbox" class="industry-cb" value="${esc(ind)}"> ${esc(ind)} <span class="cnt">${cnt}</span>`;
-    c1.appendChild(label);
-  });
+  const leftEl = document.querySelector('.industry-left');
+  if (leftEl) {
+    leftEl.innerHTML = industries.map((ind, i) => {
+      const cnt = allData.filter(r => r['メイン大業界'] === ind).length;
+      return `<div class="industry-left-item ${i===0?'active':''}" onclick="selectIndustryCategory(this,'${esc(ind)}')">${esc(ind)} <span class="count">${cnt.toLocaleString()}</span></div>`;
+    }).join('');
+    if (industries.length > 0) showIndustrySubs(industries[0]);
+  }
 
   // 都道府県
   const prefs = [...new Set(allData.map(r => r['住所（都道府県）']).filter(Boolean))].sort();
-  const acEl = document.getElementById('areaChecks');
-  acEl.innerHTML = '';
-  const acol = document.createElement('div'); acol.className = 'dd-section';
-  acol.innerHTML = '<div class="dd-title">都道府県</div><div class="dd-checks" id="areaCheckList" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;"></div>';
-  acEl.appendChild(acol);
-  const aclist = document.getElementById('areaCheckList');
-  prefs.forEach(pref => {
-    const cnt = allData.filter(r => r['住所（都道府県）'] === pref).length;
-    const label = document.createElement('label');
-    label.className = 'dd-check';
-    label.innerHTML = `<input type="checkbox" class="area-cb" value="${esc(pref)}"> ${esc(pref)} <span class="cnt">${cnt}</span>`;
-    aclist.appendChild(label);
-  });
+  const areaGrid = document.getElementById('areaGrid');
+  if (areaGrid) {
+    areaGrid.innerHTML = prefs.map(pref =>
+      `<button class="area-btn" onclick="toggleArea(this)">${esc(pref)}</button>`
+    ).join('');
+  }
 
-  // 従業員数レンジ
-  const empRanges = ['〜10名','11〜50名','51〜100名','101〜300名','301〜1000名','1001名以上'];
-  const ecEl = document.getElementById('empChecks');
-  ecEl.innerHTML = empRanges.map(r => `<label class="dd-check"><input type="checkbox" class="emp-cb" value="${r}"> ${r}</label>`).join('');
-
-  // 上場種別
-  const stocks = [...new Set(allData.map(r => r['上場種別']).filter(Boolean))].sort();
-  const scEl = document.getElementById('stockChecks');
-  scEl.innerHTML = stocks.map(s => {
-    const cnt = allData.filter(r => r['上場種別'] === s).length;
-    return `<label class="dd-check"><input type="checkbox" class="stock-cb" value="${esc(s)}"> ${esc(s)} <span class="cnt">${cnt}</span></label>`;
-  }).join('');
+  // 件数バッジ更新
+  document.getElementById('hitCount').textContent = allData.length.toLocaleString();
+  document.getElementById('bottomCount').textContent = allData.length.toLocaleString();
 }
 
-function updateSidebarCounts() {
-  const honsha = allData.filter(r => r['住所種別'] === '本社' || !r['住所種別']).length;
-  const jigyosho = allData.filter(r => r['住所種別'] && r['住所種別'] !== '本社').length;
-  document.getElementById('cnt_honsha').textContent = honsha.toLocaleString();
-  document.getElementById('cnt_jigyosho').textContent = jigyosho.toLocaleString();
-  document.getElementById('sb_cnt_tel').textContent = allData.filter(r => r['電話番号']).length.toLocaleString();
-  document.getElementById('sb_cnt_mail').textContent = allData.filter(r => r['メールアドレス']).length.toLocaleString();
-  document.getElementById('sb_cnt_fax').textContent = allData.filter(r => r['FAX番号']).length.toLocaleString();
+function showIndustrySubs(bigName) {
+  const subs = [...new Set(allData.filter(r => r['メイン大業界'] === bigName).map(r => r['メイン小業界']).filter(Boolean))].sort();
+  const grid = document.getElementById('industryGrid');
+  if (grid) {
+    grid.innerHTML = subs.map(s => {
+      const cnt = allData.filter(r => r['メイン小業界'] === s).length;
+      return `<label class="industry-check"><input type="checkbox" class="industry-sub-cb" value="${esc(s)}"> ${esc(s)} <span class="sub-count">${cnt}</span></label>`;
+    }).join('');
+  }
+  const title = document.getElementById('industryRightTitle');
+  if (title) title.textContent = bigName + ' — 小分類';
 }
 
-// =============================================
-// FILTER
-// =============================================
+// ===================== FILTER =====================
 function doFilter() {
-  filters.kw = document.getElementById('searchInput').value.trim().toLowerCase();
-  const andMode = document.getElementById('andorToggle').classList.contains('on');
+  if (allData.length === 0) return;
 
   filtered = allData.filter(row => {
-    // キーワード検索
-    if (filters.kw) {
-      const targets = [row['会社名'], row['会社名ひらがな'], row['事業内容キーワード'], row['一言説明'], row['会社概要']].join(' ').toLowerCase();
-      if (!targets.includes(filters.kw)) return false;
+    // フリーワード
+    if (currentKw) {
+      const target = [row['会社名'], row['会社名ひらがな'], row['事業内容キーワード'], row['一言説明'], row['会社概要']].join(' ').toLowerCase();
+      if (!target.includes(currentKw.toLowerCase())) return false;
     }
-
     // 業界
     if (filters.industries.size > 0) {
-      if (!filters.industries.has(row['メイン大業界'])) return false;
+      if (!filters.industries.has(row['メイン大業界']) && !filters.industries.has(row['メイン小業界'])) return false;
     }
-
     // 都道府県
     if (filters.areas.size > 0) {
       if (!filters.areas.has(row['住所（都道府県）'])) return false;
     }
-
     // 従業員数
     if (filters.empRanges.size > 0) {
       const emp = parseInt(row['従業員数']) || 0;
@@ -605,248 +1695,122 @@ function doFilter() {
       if (filters.empRanges.has('1001名以上') && emp >= 1001) ok = true;
       if (!ok) return false;
     }
-
     // 上場種別
     if (filters.stocks.size > 0) {
       if (!filters.stocks.has(row['上場種別'])) return false;
     }
-
-    // 連絡先
-    const conds = [];
-    if (filters.contact.tel) conds.push(!!row['電話番号']);
-    if (filters.contact.fax) conds.push(!!row['FAX番号']);
-    if (filters.contact.mail) conds.push(!!row['メールアドレス']);
-    if (filters.contact.recruit_mail) conds.push(!!row['本社採用メールアドレス']);
-    if (filters.contact.inquiry) conds.push(!!row['お問い合わせページ']);
-    if (conds.length > 0) {
-      const pass = andMode ? conds.every(Boolean) : conds.some(Boolean);
-      if (!pass) return false;
-    }
-
-    // ステータスフィルター
-    if (filters.statuses.size > 0) {
-      const key = getKey(row);
-      const st = (callData[key] && callData[key].status) || '未架電';
-      if (!filters.statuses.has(st)) return false;
-    }
-
-    // サイドバー：対象企業
-    const isSb_honsha = document.getElementById('sb_honsha').checked;
-    const isSb_jigyosho = document.getElementById('sb_jigyosho').checked;
-    if (isSb_honsha || isSb_jigyosho) {
-      const kind = row['住所種別'] || '本社';
-      const isHonsha = kind === '本社' || !row['住所種別'];
-      if (isSb_honsha && !isSb_jigyosho && !isHonsha) return false;
-      if (!isSb_honsha && isSb_jigyosho && isHonsha) return false;
-    }
-
-    // サイドバー：連絡先フィルター
-    if (document.getElementById('sb_tel').checked && !row['電話番号']) return false;
-    if (document.getElementById('sb_mail2').checked && !row['メールアドレス']) return false;
-    if (document.getElementById('sb_fax2').checked && !row['FAX番号']) return false;
-
-    // サイドバー：NG除外
-    if (document.getElementById('sb_exNG').checked) {
-      const key = getKey(row);
-      const st = (callData[key] && callData[key].status) || '未架電';
-      if (st === 'NG') return false;
-    }
-
     return true;
   });
 
-  // ソート
-  const sort = document.getElementById('sortSel').value;
-  if (sort === 'match_desc') filtered.sort((a, b) => (parseInt(b['マッチ度']) || 0) - (parseInt(a['マッチ度']) || 0));
-  else if (sort === 'emp_desc') filtered.sort((a, b) => (parseInt(b['従業員数']) || 0) - (parseInt(a['従業員数']) || 0));
-  else if (sort === 'emp_asc') filtered.sort((a, b) => (parseInt(a['従業員数']) || 0) - (parseInt(b['従業員数']) || 0));
-  else if (sort === 'name_asc') filtered.sort((a, b) => (a['会社名ひらがな'] || a['会社名'] || '').localeCompare(b['会社名ひらがな'] || b['会社名'] || ''));
-
-  currentPage = 1;
-  selected.clear();
   document.getElementById('hitCount').textContent = filtered.length.toLocaleString();
   document.getElementById('bottomCount').textContent = filtered.length.toLocaleString();
-  document.getElementById('resultCnt').textContent = filtered.length.toLocaleString();
-  renderPage();
+  renderCards(filtered);
 }
 
-// =============================================
-// RENDER
-// =============================================
-const LOGO_COLORS = ['#ea6000','#3b82f6','#2aab6e','#8b5cf6','#f59e0b','#ef4444','#0ea5e9','#ec4899'];
-
-function renderPage() {
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const end = Math.min(start + PAGE_SIZE, filtered.length);
-  const pageData = filtered.slice(start, end);
-
-  const wrap = document.getElementById('cardsWrap');
-  if (filtered.length === 0 && allData.length > 0) {
-    wrap.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">条件に該当する企業がありません</div><div class="empty-sub">絞り込み条件を変更してください</div></div>`;
-  } else if (allData.length === 0) {
-    // 初期状態はemptyStateで表示済み
-  } else {
-    wrap.innerHTML = pageData.map((row, localIdx) => {
-      const globalIdx = start + localIdx;
-      return renderCard(row, globalIdx);
-    }).join('');
+// ===================== RENDER CARDS =====================
+function renderCards(data) {
+  const container = document.getElementById('resultsContainer');
+  if (data.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text3);">
+      <div style="font-size:36px;margin-bottom:12px;">🔍</div>
+      <div style="font-size:15px;font-weight:600;">条件に該当する企業がありません</div>
+      <div style="font-size:12px;margin-top:6px;">絞り込み条件を変更してください</div>
+    </div>`;
+    return;
   }
 
-  renderPagination(start, end);
-  document.getElementById('paginationBar').style.display = filtered.length > 0 ? 'flex' : 'none';
-}
+  container.innerHTML = data.slice(0, 50).map((row, idx) => {
+    const name = row['会社名'] || '';
+    const logoChar = name.charAt(0) || '？';
+    const logoColor = LOGO_COLORS[name.charCodeAt(0) % LOGO_COLORS.length] || '#ea6000';
+    const ind = row['メイン大業界'] || '';
+    const indSub = row['メイン小業界'] || '';
+    const pref = row['住所（都道府県）'] || '';
+    const addr = row['住所（市区町村以降）'] || '';
+    const tel = row['電話番号'] || '';
+    const fax = row['FAX番号'] || '';
+    const mail = row['メールアドレス'] || '';
+    const site = row['会社サイト'] || '';
+    const emp = row['従業員数'] ? row['従業員数'] + '名' : '';
+    const stock = row['上場種別'] || '';
+    const ceo = row['代表者名'] || '';
+    const match = parseInt(row['マッチ度']) || 0;
+    const matchColor = match >= 80 ? 'var(--accent)' : match >= 60 ? 'var(--warn)' : 'var(--text3)';
+    const kws = (row['事業内容キーワード'] || '').split(/[,、・\/]/).filter(k=>k.trim()).slice(0,5);
+    const kwHtml = kws.map(k => `<a class="keyword-chip">${esc(k.trim())}</a>`).join('');
+    const desc = row['一言説明'] || '';
+    const stockHtml = stock && stock !== '未上場' ? `<span class="stock-badge">${esc(stock)}</span>` : '';
+    const isSelected = selectedCards.has(idx);
 
-function renderCard(row, idx) {
-  const key = getKey(row);
-  const cd = callData[key] || { status: '未架電', memo: '' };
-  const status = cd.status;
-  const memo = cd.memo || '';
-  const match = parseInt(row['マッチ度']) || 0;
-  const matchColor = match >= 80 ? 'var(--accent)' : match >= 60 ? 'var(--warn)' : 'var(--text3)';
-  const isSelected = selected.has(idx);
-  const name = row['会社名'] || '（会社名なし）';
-  const logoChar = name.charAt(0);
-  const logoColor = LOGO_COLORS[name.charCodeAt(0) % LOGO_COLORS.length];
-  const kw = row['事業内容キーワード'] || '';
-  const kwChips = kw.split(/[,、・\/]/).filter(k => k.trim()).slice(0, 5)
-    .map(k => `<span class="kw-chip">${esc(k.trim())}</span>`).join('');
+    // 架電ステータス
+    const key = row['法人番号'] || name;
+    const cd = callData[key] || { status: '未架電', memo: '' };
+    const statusOpts = ['未架電','折返待ち','アポ済','NG','保留'].map(s =>
+      `<option value="${s}" ${s===cd.status?'selected':''}>${s}</option>`
+    ).join('');
 
-  const freeKw = filters.kw;
-  const displayName = freeKw && name.toLowerCase().includes(freeKw) ?
-    name.replace(new RegExp(escRegex(freeKw), 'gi'), m => `<span class="highlight">${m}</span>`) : esc(name);
+    const nameDisplay = currentKw && name.toLowerCase().includes(currentKw.toLowerCase())
+      ? name.replace(new RegExp(currentKw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'gi'), m => `<span class="highlight">${m}</span>`)
+      : esc(name);
 
-  const statusClass = { '未架電': 'status-new', '折返待ち': 'status-callback', 'アポ済': 'status-appt', 'NG': 'status-ng', '保留': 'status-new' }[status] || 'status-new';
-  const statusOpts = ['未架電','折返待ち','アポ済','NG','保留'].map(s => `<option value="${s}" ${s === status ? 'selected' : ''}>${s}</option>`).join('');
-
-  const tel = row['電話番号'] || '';
-  const fax = row['FAX番号'] || '';
-  const mail = row['メールアドレス'] || '';
-  const site = row['会社サイト'] || '';
-  const contactBadges = [
-    tel ? `<a class="badge badge-tel" href="tel:${tel.replace(/[^\d+]/g,'')}" onclick="event.stopPropagation()">📞 ${esc(tel)}</a>` : '',
-    fax ? `<span class="badge badge-fax">FAX ${esc(fax)}</span>` : '',
-    mail ? `<a class="badge badge-mail" href="mailto:${mail}" onclick="event.stopPropagation()">✉ ${esc(mail)}</a>` : '',
-    site ? `<a class="badge badge-web" href="${site.startsWith('http') ? site : 'https://'+site}" target="_blank" onclick="event.stopPropagation()">🌐 サイト</a>` : ''
-  ].filter(Boolean).join('');
-
-  const pref = row['住所（都道府県）'] || '';
-  const addr = row['住所（市区町村以降）'] || '';
-  const ind = row['メイン大業界'] || '';
-  const indSub = row['メイン小業界'] || '';
-  const emp = row['従業員数'] ? row['従業員数'] + '名' : '';
-  const stock = row['上場種別'] || '';
-  const stockHtml = stock && stock !== '未上場' ? `<span class="stock-tag">${esc(stock)}</span>` : '';
-
-  return `
-  <div class="card ${isSelected ? 'selected' : ''}" id="card_${idx}" onclick="toggleCard(${idx})">
-    <div class="card-top">
-      <input type="checkbox" class="cb" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation();toggleCard(${idx})">
-      <div class="card-logo" style="color:${logoColor}">${esc(logoChar)}</div>
-      <div class="card-body">
-        <div class="card-crumb">${esc(ind)}${indSub ? ' › ' + esc(indSub) : ''}</div>
-        <div class="card-name">${displayName} ${stockHtml}</div>
-        <div class="card-meta">
-          ${pref ? `<div class="card-meta-item">📍 ${esc(pref)} ${esc(addr).substring(0,12)}${addr.length>12?'...':''}</div>` : ''}
-          ${emp ? `<div class="card-meta-item">👥 ${esc(emp)}</div>` : ''}
-          ${row['代表者名'] ? `<div class="card-meta-item">👤 ${esc(row['代表者名'])}</div>` : ''}
-          ${row['設立年月'] ? `<div class="card-meta-item">🗓 ${esc(row['設立年月'])}</div>` : ''}
+    return `
+    <div class="result-card ${isSelected?'selected':''}" onclick="toggleCard(${idx},event)">
+      <div class="card-top">
+        <input type="checkbox" class="checkbox-main" ${isSelected?'checked':''} onclick="event.stopPropagation();toggleCard(${idx},event)">
+        <div class="card-logo" style="color:${logoColor};font-size:20px;font-weight:800;">${esc(logoChar)}</div>
+        <div class="card-main">
+          <div class="card-breadcrumb">${esc(ind)}${indSub?' › '+esc(indSub):''}</div>
+          <div class="card-name">${nameDisplay} ${stockHtml}</div>
+          <div class="card-info-row">
+            <div class="card-info-item">📍 ${esc(pref)} ${esc(addr).substring(0,15)}${addr.length>15?'...':''}</div>
+            ${emp ? `<div class="card-info-item">👥 ${esc(emp)}</div>` : ''}
+            ${ceo ? `<div class="card-info-item">👤 ${esc(ceo)}</div>` : ''}
+          </div>
+          <div class="card-info-row" style="margin-top:5px;gap:5px;">
+            ${tel ? `<a class="contact-tag tel" href="tel:${tel.replace(/[^\d+]/g,'')}" onclick="event.stopPropagation()">📞 ${esc(tel)}</a>` : ''}
+            ${fax ? `<span class="contact-tag fax">FAX ${esc(fax)}</span>` : ''}
+            ${mail ? `<a class="contact-tag mail" href="mailto:${mail}" onclick="event.stopPropagation()">✉ ${esc(mail)}</a>` : ''}
+            ${site ? `<a class="contact-tag web" href="${site.startsWith('http')?site:'https://'+site}" target="_blank" onclick="event.stopPropagation()">🌐 サイト</a>` : ''}
+          </div>
         </div>
-        <div class="contact-badges">${contactBadges}</div>
+        <div class="card-right">
+          <select style="border:1px solid var(--border2);border-radius:4px;padding:5px 20px 5px 8px;font-size:11px;font-family:inherit;background:white;outline:none;cursor:pointer;appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' fill='%239094a8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 5px center;min-width:100px;"
+            onchange="changeStatus(event,'${esc(key)}')" onclick="event.stopPropagation()">${statusOpts}</select>
+        </div>
       </div>
-      <div class="card-right">
-        <select class="status-sel ${statusClass}" onchange="changeStatus(event,'${escAttr(key)}')" onclick="event.stopPropagation()">${statusOpts}</select>
+      <div class="card-bottom">
+        ${match > 0 ? `<div class="match-pct-row">マッチ度 <span class="match-pct-num" style="color:${matchColor}">${match}%</span></div>` : ''}
+        <div class="keyword-row">${kwHtml || (desc ? `<span style="color:var(--text2)">${esc(desc).substring(0,60)}...</span>` : '')}</div>
+        <div style="flex-basis:100%;display:flex;gap:6px;align-items:flex-end;margin-top:4px;">
+          <textarea style="flex:1;background:#f8f9fb;border:1px solid var(--border);border-radius:4px;padding:6px 8px;font-size:11px;font-family:inherit;color:var(--text);resize:none;outline:none;min-height:44px;" 
+            placeholder="架電メモ・担当者情報など..." rows="2"
+            onclick="event.stopPropagation()" onfocus="event.stopPropagation()"
+            onchange="changeMemo(event,'${esc(key)}')">${esc(cd.memo||'')}</textarea>
+          <button style="padding:4px 12px;background:var(--accent);border:none;border-radius:4px;font-size:11px;font-weight:700;color:white;cursor:pointer;font-family:inherit;"
+            onclick="event.stopPropagation();saveMemo('${esc(key)}',this)">保存</button>
+        </div>
       </div>
-    </div>
-    <div class="card-bottom">
-      ${match > 0 ? `<div class="match-pct">マッチ度 <span class="match-num" style="color:${matchColor}">${match}%</span></div>` : ''}
-      ${kwChips ? `<div class="kw-row">キーワード：${kwChips}</div>` : (row['一言説明'] ? `<div class="kw-row" style="color:var(--text2)">${esc(row['一言説明']).substring(0,60)}...</div>` : '')}
-      <div style="flex-basis:100%;display:flex;gap:6px;align-items:flex-end;margin-top:2px;">
-        <textarea class="memo-area" placeholder="架電メモ・担当者情報など..." rows="2"
-          onclick="event.stopPropagation()"
-          onchange="changeMemo(event,'${escAttr(key)}')"
-          onfocus="event.stopPropagation()">${esc(memo)}</textarea>
-        <button class="save-memo-btn" onclick="event.stopPropagation();saveMemo('${escAttr(key)}',this)">保存</button>
-      </div>
-    </div>
-  </div>`;
-}
+    </div>`;
+  }).join('');
 
-// =============================================
-// PAGINATION
-// =============================================
-function renderPagination(start, end) {
-  const total = filtered.length;
-  const totalPages = Math.ceil(total / PAGE_SIZE);
-  document.getElementById('pageInfo').textContent = `${start + 1}–${end} / ${total.toLocaleString()}件`;
-
-  const btns = document.getElementById('pageBtns');
-  let html = `<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage<=1?'disabled':''}>‹</button>`;
-  let pages = [];
-  if (totalPages <= 7) {
-    for (let i = 1; i <= totalPages; i++) pages.push(i);
-  } else {
-    pages = [1];
-    if (currentPage > 3) pages.push('…');
-    for (let i = Math.max(2, currentPage-1); i <= Math.min(totalPages-1, currentPage+1); i++) pages.push(i);
-    if (currentPage < totalPages - 2) pages.push('…');
-    pages.push(totalPages);
-  }
-  pages.forEach(p => {
-    if (p === '…') html += `<button class="pg-btn" disabled>…</button>`;
-    else html += `<button class="pg-btn ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
-  });
-  html += `<button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=totalPages?'disabled':''}>›</button>`;
-  btns.innerHTML = html;
-}
-
-function goPage(p) {
-  const total = Math.ceil(filtered.length / PAGE_SIZE);
-  if (p < 1 || p > total) return;
-  currentPage = p;
-  selected.clear();
-  renderPage();
-  document.getElementById('cardsWrap').scrollTop = 0;
-}
-
-// =============================================
-// CARD ACTIONS
-// =============================================
-function toggleCard(idx) {
-  if (selected.has(idx)) selected.delete(idx);
-  else selected.add(idx);
-  const card = document.getElementById(`card_${idx}`);
-  if (card) {
-    card.classList.toggle('selected', selected.has(idx));
-    const cb = card.querySelector('input[type=checkbox].cb');
-    if (cb) cb.checked = selected.has(idx);
+  if (data.length > 50) {
+    container.innerHTML += `<div style="text-align:center;padding:16px;font-size:12px;color:var(--text3);">上位50件を表示中。CSV出力で全件取得できます。</div>`;
   }
 }
 
-function toggleSelectAll() {
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const end = Math.min(start + PAGE_SIZE, filtered.length);
-  const pageIdxs = [];
-  for (let i = start; i < end; i++) pageIdxs.push(i);
-  const allSel = pageIdxs.every(i => selected.has(i));
-  pageIdxs.forEach(i => allSel ? selected.delete(i) : selected.add(i));
-  renderPage();
-  document.getElementById('selAllBtn').textContent = allSel ? '☐ 全選択' : '☑ 全解除';
+// ===================== CARD ACTIONS =====================
+function toggleCard(idx, e) {
+  if (e && (e.target.tagName === 'A' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON')) return;
+  if (selectedCards.has(idx)) selectedCards.delete(idx);
+  else selectedCards.add(idx);
+  renderCards(filtered);
 }
 
-// =============================================
-// STATUS & MEMO
-// =============================================
-function getKey(row) {
-  return row['法人番号'] || row['会社名'] || JSON.stringify(row).substring(0, 40);
-}
-
+// ===================== STATUS & MEMO =====================
 function changeStatus(e, key) {
   if (!callData[key]) callData[key] = { status: '未架電', memo: '' };
   callData[key].status = e.target.value;
   saveCallData();
-  // スタイル更新
-  const sel = e.target;
-  sel.className = 'status-sel ' + ({ '未架電':'status-new','折返待ち':'status-callback','アポ済':'status-appt','NG':'status-ng','保留':'status-new' }[e.target.value] || 'status-new');
 }
 
 function changeMemo(e, key) {
@@ -856,10 +1820,9 @@ function changeMemo(e, key) {
 
 function saveMemo(key, btn) {
   saveCallData();
-  const orig = btn.textContent;
   btn.textContent = '✓ 保存済';
-  btn.style.background = 'var(--success)';
-  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 1500);
+  btn.style.background = '#2aab6e';
+  setTimeout(() => { btn.textContent = '保存'; btn.style.background = ''; }, 1500);
 }
 
 function saveCallData() {
@@ -867,173 +1830,161 @@ function saveCallData() {
 }
 
 function loadCallData() {
-  try {
-    const d = localStorage.getItem('callData_v1');
-    if (d) callData = JSON.parse(d);
-  } catch(e) { callData = {}; }
+  try { const d = localStorage.getItem('callData_v1'); if (d) callData = JSON.parse(d); } catch(e) { callData = {}; }
 }
 
-// =============================================
-// EXPORT CSV
-// =============================================
-function exportCSV() {
-  if (filtered.length === 0) { alert('出力するデータがありません'); return; }
-  const targets = selected.size > 0 ? [...selected].sort((a,b)=>a-b).map(i => filtered[i]) : filtered;
-  const headers = Object.keys(allData[0]);
-  const extraHeaders = ['架電ステータス', '架電メモ'];
-  const allHeaders = [...headers, ...extraHeaders];
-
-  const rows = targets.map(row => {
-    const key = getKey(row);
+// ===================== EXPORT =====================
+function exportCsv() {
+  const targets = selectedCards.size > 0 ? [...selectedCards].sort((a,b)=>a-b).map(i=>filtered[i]) : filtered;
+  if (!targets.length) { alert('出力するデータがありません'); return; }
+  const headers = allData.length > 0 ? Object.keys(allData[0]) : [];
+  const extra = ['架電ステータス','架電メモ'];
+  const csv = [[...headers,...extra].map(csvEsc), ...targets.map(row => {
+    const key = row['法人番号'] || row['会社名'];
     const cd = callData[key] || {};
-    return [...headers.map(h => csvEsc(row[h] || '')), csvEsc(cd.status || '未架電'), csvEsc(cd.memo || '')];
-  });
-
-  const csv = [allHeaders.map(csvEsc), ...rows].map(r => r.join(',')).join('\n');
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+    return [...headers.map(h => csvEsc(row[h]||'')), csvEsc(cd.status||'未架電'), csvEsc(cd.memo||'')];
+  }).map(r=>r.join(','))].join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `営業リスト_${new Date().toLocaleDateString('ja').replace(/\//g,'-')}.csv`;
-  a.click();
+  a.href=url; a.download=`営業リスト_${new Date().toLocaleDateString('ja').replace(/\//g,'-')}.csv`; a.click();
   URL.revokeObjectURL(url);
 }
 
 function csvEsc(v) {
-  const s = String(v);
-  if (s.includes(',') || s.includes('"') || s.includes('\n')) return '"' + s.replace(/"/g, '""') + '"';
-  return s;
+  const s = String(v||'');
+  return (s.includes(',')||s.includes('"')||s.includes('\n')) ? '"'+s.replace(/"/g,'""')+'"' : s;
 }
 
-// =============================================
-// DROPDOWN LOGIC
-// =============================================
-function toggleDD(name) {
-  if (activeDD === name) { closeDD(); return; }
-  closeDD();
-  activeDD = name;
-  document.getElementById(`dd-${name}`).classList.add('open');
-  document.getElementById(`btn${capitalize(name)}`).classList.add('active');
+// ===================== DROPDOWN =====================
+function toggleDropdown(name) {
+  const panel = document.getElementById(`panel-${name}`);
+  const btn = document.getElementById(`btn${name.charAt(0).toUpperCase()+name.slice(1)}`);
+  if (activePanel === name) { closeDropdown(); return; }
+  closeDropdown();
+  activePanel = name;
+  if (panel) panel.classList.add('show');
+  if (btn) btn.classList.add('active');
 }
 
-function closeDD() {
-  if (!activeDD) return;
-  document.getElementById(`dd-${activeDD}`).classList.remove('open');
-  document.getElementById(`btn${capitalize(activeDD)}`).classList.remove('active');
-  activeDD = null;
+function closeDropdown() {
+  if (!activePanel) return;
+  const panel = document.getElementById(`panel-${activePanel}`);
+  const btn = document.getElementById(`btn${activePanel.charAt(0).toUpperCase()+activePanel.slice(1)}`);
+  if (panel) panel.classList.remove('show');
+  if (btn) btn.classList.remove('active');
+  activePanel = null;
 }
 
-function applyDD(type) {
-  closeDD();
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.filter-row') && !e.target.closest('.dropdown-overlay')) closeDropdown();
+});
+
+function applyFilter(type) {
+  closeDropdown();
   if (type === 'industry') {
     filters.industries.clear();
-    document.querySelectorAll('.industry-cb:checked').forEach(cb => filters.industries.add(cb.value));
-  } else if (type === 'area') {
+    document.querySelectorAll('.industry-sub-cb:checked').forEach(cb => filters.industries.add(cb.value));
+    document.querySelectorAll('.industry-left-item.active').forEach(el => {
+      const name = el.textContent.replace(/[\d,]+$/,'').trim();
+      if (name) filters.industries.add(name);
+    });
+  }
+  if (type === 'area') {
     filters.areas.clear();
-    document.querySelectorAll('.area-cb:checked').forEach(cb => filters.areas.add(cb.value));
-  } else if (type === 'scale') {
+    document.querySelectorAll('.area-btn.active').forEach(btn => filters.areas.add(btn.textContent.trim()));
+  }
+  if (type === 'scale') {
     filters.empRanges.clear();
     document.querySelectorAll('.emp-cb:checked').forEach(cb => filters.empRanges.add(cb.value));
     filters.stocks.clear();
     document.querySelectorAll('.stock-cb:checked').forEach(cb => filters.stocks.add(cb.value));
-  } else if (type === 'contact') {
-    filters.contact.tel = document.getElementById('f_tel').checked;
-    filters.contact.fax = document.getElementById('f_fax').checked;
-    filters.contact.mail = document.getElementById('f_mail').checked;
-    filters.contact.recruit_mail = document.getElementById('f_recruit_mail').checked;
-    filters.contact.inquiry = document.getElementById('f_inquiry').checked;
-  } else if (type === 'status') {
-    filters.statuses.clear();
-    document.querySelectorAll('.status-filter-cb:checked').forEach(cb => filters.statuses.add(cb.value));
   }
-  renderActiveTags();
-  doFilter();
+
+  // アクティブタグを更新
+  const container = document.getElementById('activeFilters');
+  // 既存の同タイプタグを削除
+  container.querySelectorAll(`[data-filter="${type}"]`).forEach(el => el.remove());
+
+  const labels = { industry: '業界', area: '地域', scale: '規模・上場' };
+  const sets = { industry: filters.industries, area: filters.areas };
+  const set = sets[type];
+  if (set && set.size > 0) {
+    const tag = document.createElement('div');
+    tag.className = 'filter-tag';
+    tag.dataset.filter = type;
+    tag.innerHTML = `${labels[type]}：${[...set].slice(0,2).join('・')}${set.size>2?'他':''}  <span class="remove" onclick="clearFilterType('${type}')">×</span>`;
+    container.appendChild(tag);
+  }
+  if (type === 'scale' && (filters.empRanges.size > 0 || filters.stocks.size > 0)) {
+    const tag = document.createElement('div');
+    tag.className = 'filter-tag';
+    tag.dataset.filter = 'scale';
+    tag.innerHTML = `規模絞込み <span class="remove" onclick="clearFilterType('scale')">×</span>`;
+    container.appendChild(tag);
+  }
+
+  if (allData.length > 0) doFilter();
 }
 
-function renderActiveTags() {
-  const container = document.getElementById('activeTags');
-  container.innerHTML = '';
-  const add = (label, clear) => {
-    const el = document.createElement('div');
-    el.className = 'active-tag';
-    el.innerHTML = `${esc(label)} <span class="rm" onclick="${clear}">×</span>`;
-    container.appendChild(el);
-  };
-  if (filters.industries.size > 0) add([...filters.industries].join('・'), 'clearFilter("industry")');
-  if (filters.areas.size > 0) add([...filters.areas].join('・'), 'clearFilter("area")');
-  if (filters.empRanges.size > 0) add('従業員：' + [...filters.empRanges].join('・'), 'clearFilter("empRanges")');
-  if (filters.stocks.size > 0) add([...filters.stocks].join('・'), 'clearFilter("stocks")');
-  const c = filters.contact;
-  const cLabels = [c.tel&&'電話',c.fax&&'FAX',c.mail&&'メール',c.recruit_mail&&'採用メール',c.inquiry&&'問合せページ'].filter(Boolean);
-  if (cLabels.length > 0) add(cLabels.join('・') + 'あり', 'clearFilter("contact")');
-  if (filters.statuses.size > 0) add('ステータス：' + [...filters.statuses].join('・'), 'clearFilter("status")');
+function clearFilterType(type) {
+  if (type === 'industry') filters.industries.clear();
+  if (type === 'area') filters.areas.clear();
+  if (type === 'scale') { filters.empRanges.clear(); filters.stocks.clear(); }
+  document.querySelectorAll(`[data-filter="${type}"]`).forEach(el => el.remove());
+  if (allData.length > 0) doFilter();
 }
 
-function clearFilter(type) {
-  if (type === 'industry') { filters.industries.clear(); document.querySelectorAll('.industry-cb').forEach(cb => cb.checked = false); }
-  if (type === 'area') { filters.areas.clear(); document.querySelectorAll('.area-cb').forEach(cb => cb.checked = false); }
-  if (type === 'empRanges') { filters.empRanges.clear(); document.querySelectorAll('.emp-cb').forEach(cb => cb.checked = false); }
-  if (type === 'stocks') { filters.stocks.clear(); document.querySelectorAll('.stock-cb').forEach(cb => cb.checked = false); }
-  if (type === 'contact') { Object.keys(filters.contact).forEach(k => filters.contact[k] = false); ['f_tel','f_fax','f_mail','f_recruit_mail','f_inquiry'].forEach(id => { const el = document.getElementById(id); if(el) el.checked = false; }); }
-  if (type === 'status') { filters.statuses.clear(); document.querySelectorAll('.status-filter-cb').forEach(cb => cb.checked = false); }
-  renderActiveTags();
-  doFilter();
+function selectIndustryCategory(el, name) {
+  document.querySelectorAll('.industry-left-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  showIndustrySubs(name);
 }
+
+function toggleArea(btn) { btn.classList.toggle('active'); }
+
+// ===================== FREEWORD =====================
+function handleFreeword(val) {
+  currentKw = val;
+  const kwTag = document.getElementById('kwFilterTag');
+  if (val) {
+    kwTag.style.display = 'inline-flex';
+    document.getElementById('kwFilterText').textContent = val;
+  } else {
+    kwTag.style.display = 'none';
+  }
+  if (allData.length > 0) doFilter();
+}
+
+function removeKwFilter() {
+  currentKw = '';
+  document.getElementById('freewordInput').value = '';
+  document.getElementById('kwFilterTag').style.display = 'none';
+  if (allData.length > 0) doFilter();
+}
+
+function removeFilter(el) { el.parentElement.remove(); }
 
 function clearAll() {
-  document.getElementById('searchInput').value = '';
-  filters.kw = '';
-  ['industry','area','empRanges','stocks','contact','status'].forEach(t => clearFilter(t));
-  ['sb_honsha','sb_jigyosho','sb_tel','sb_mail2','sb_fax2','sb_exNG'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.checked = id === 'sb_honsha';
-  });
-  doFilter();
+  document.getElementById('activeFilters').innerHTML = '';
+  currentKw = '';
+  document.getElementById('freewordInput').value = '';
+  document.getElementById('kwFilterTag').style.display = 'none';
+  filters.industries.clear(); filters.areas.clear(); filters.empRanges.clear(); filters.stocks.clear();
+  if (allData.length > 0) doFilter();
 }
 
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.dd-wrapper') && !e.target.closest('.filter-chip-btn')) closeDD();
-});
+// ===================== MODAL =====================
+function openModal() { document.getElementById('csvModal').classList.add('show'); }
+function closeModal() { document.getElementById('csvModal').classList.remove('show'); }
 
-// =============================================
-// MODAL（CSV upload）
-// =============================================
-function openModal() { document.getElementById('csvModal').classList.add('open'); }
-function closeModal() { document.getElementById('csvModal').classList.remove('open'); }
-
-// =============================================
-// UTILS
-// =============================================
+// ===================== UTILS =====================
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function escAttr(s) { return String(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
-function escRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
-function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
-// 初期化
+// ===================== INIT =====================
 loadCallData();
 </script>
-
-<!-- CSV MODAL (追加読み込み) -->
-<div class="modal-bg" id="csvModal">
-  <div class="modal">
-    <div class="modal-title">📂 CSVファイルを読み込む</div>
-    <label class="upload-zone" for="csvInput3">
-      <div class="uz-ico">📄</div>
-      <div class="uz-txt">CSVファイルをドラッグ&ドロップ<br>またはクリックして選択</div>
-      <div class="uz-sub">UTF-8 / Shift-JIS 対応</div>
-      <input type="file" id="csvInput3" accept=".csv" style="display:none" onchange="loadCSV(event)">
-    </label>
-    <div class="col-hint">
-      <strong style="color:var(--text2);">読み込み対応カラム（主要項目）</strong><br>
-      会社名 / 会社名ひらがな / 電話番号 / FAX番号 / メールアドレス / 本社採用メールアドレス / お問い合わせページ / 住所（都道府県）/ 住所（市区町村以降）/ 代表者名 / 従業員数 / 上場種別 / 売上高 / 設立年月 / メイン大業界 / メイン小業界 / 事業内容キーワード / 一言説明 / マッチ度 / 法人番号 など
-    </div>
-    <div class="modal-actions">
-      <button class="m-cancel" onclick="closeModal()">キャンセル</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
