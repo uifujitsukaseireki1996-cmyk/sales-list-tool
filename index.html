@@ -422,13 +422,27 @@ const filters = {
 function parseCSV(text) {
   const lines = text.split(/\r?\n/);
   if (lines.length < 2) return [];
-  const headers = parseCSVLine(lines[0]);
+
+  // musubu CSV対応：「会社名」を含む行をヘッダーとして自動検出
+  let headerIdx = 0;
+  for (let i = 0; i < Math.min(10, lines.length); i++) {
+    if (lines[i].includes('会社名') && lines[i].includes('電話番号')) {
+      headerIdx = i;
+      break;
+    }
+  }
+
+  const headers = parseCSVLine(lines[headerIdx]);
   const rows = [];
-  for (let i = 1; i < lines.length; i++) {
+  for (let i = headerIdx + 1; i < lines.length; i++) {
     if (!lines[i].trim()) continue;
     const vals = parseCSVLine(lines[i]);
+    // 全フィールドが空の行はスキップ
+    if (vals.every(v => !v.trim())) continue;
     const obj = {};
     headers.forEach((h, idx) => { obj[h.trim()] = (vals[idx] || '').trim(); });
+    // 会社名がない行はスキップ
+    if (!obj['会社名']) continue;
     rows.push(obj);
   }
   return rows;
