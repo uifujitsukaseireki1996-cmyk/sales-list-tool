@@ -1519,8 +1519,7 @@ body {
 <script>
 // ===================== CONFIG（ここを変更） =====================
 const SUPABASE_URL = 'https://mfdijochgbxchhmnpusi.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_X5JjxOmBwjhQgQdiuppo5A_SNIt8e6H
-';
+const SUPABASE_KEY = 'sb_publishable_X5JjxOmBwjhQgQdiuppo5A_SNIt8e6H';
 
 // ===================== STATE =====================
 let allData = [];
@@ -1546,43 +1545,46 @@ const LOGO_COLORS = ['#ea6000','#3b82f6','#2aab6e','#8b5cf6','#f59e0b','#ef4444'
 async function fetchCompanies(params = {}) {
   showLoading(true);
   try {
+    const offset = ((params.page || 1) - 1) * PAGE_SIZE;
+
+    // POSTでRPCを使わず、クエリはすべてURLエンコードして送る
+    const col = (name) => encodeURIComponent(name);
+
     let url = `${SUPABASE_URL}/rest/v1/companies?select=*`;
 
     // フリーワード検索
     if (params.kw) {
-      url += `&会社名=ilike.*${encodeURIComponent(params.kw)}*`;
+      url += `&${col('会社名')}=ilike.*${encodeURIComponent(params.kw)}*`;
     }
 
     // 都道府県
     if (params.areas && params.areas.size > 0) {
-      const prefList = [...params.areas].map(p => `"${p}"`).join(',');
-      url += `&住所（都道府県）=in.(${prefList})`;
+      const prefList = [...params.areas].map(p => p).join(',');
+      url += `&${col('住所（都道府県）')}=in.(${prefList})`;
     }
 
     // 業界
     if (params.industries && params.industries.size > 0) {
-      const indList = [...params.industries].map(p => `"${p}"`).join(',');
-      url += `&メイン大業界=in.(${indList})`;
+      const indList = [...params.industries].join(',');
+      url += `&${col('メイン大業界')}=in.(${indList})`;
     }
 
     // 上場種別
     if (params.stocks && params.stocks.size > 0) {
-      const stockList = [...params.stocks].map(p => `"${p}"`).join(',');
-      url += `&上場種別=in.(${stockList})`;
+      const stockList = [...params.stocks].join(',');
+      url += `&${col('上場種別')}=in.(${stockList})`;
     }
 
     // 連絡先
     if (params.contact) {
-      if (params.contact.tel) url += `&電話番号=not.is.null`;
-      if (params.contact.mail) url += `&メールアドレス=not.is.null`;
-      if (params.contact.fax) url += `&FAX番号=not.is.null`;
+      if (params.contact.tel) url += `&${col('電話番号')}=not.is.null&${col('電話番号')}=neq.`;
+      if (params.contact.mail) url += `&${col('メールアドレス')}=not.is.null&${col('メールアドレス')}=neq.`;
+      if (params.contact.fax) url += `&${col('FAX番号')}=not.is.null&${col('FAX番号')}=neq.`;
     }
 
     // ページネーション
-    const offset = ((params.page || 1) - 1) * PAGE_SIZE;
     url += `&limit=${PAGE_SIZE}&offset=${offset}`;
 
-    // 件数取得用ヘッダー
     const res = await fetch(url, {
       headers: {
         'apikey': SUPABASE_KEY,
@@ -1591,15 +1593,22 @@ async function fetchCompanies(params = {}) {
       }
     });
 
-    if (!res.ok) throw new Error('APIエラー: ' + res.status);
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error('API Error:', res.status, errText);
+      throw new Error('APIエラー: ' + res.status);
+    }
 
     const data = await res.json();
-    const total = parseInt(res.headers.get('Content-Range')?.split('/')[1] || '0');
+    console.log('取得データ件数:', data.length, 'サンプル:', data[0]);
+
+    const contentRange = res.headers.get('Content-Range');
+    const total = contentRange ? parseInt(contentRange.split('/')[1]) || data.length : data.length;
 
     return { data, total };
   } catch(e) {
-    console.error(e);
-    alert('データの取得に失敗しました。\nSupabaseのURLとAPIキーを確認してください。');
+    console.error('fetchCompanies error:', e);
+    alert('データの取得に失敗しました。\nSupabaseのURLとAPIキーを確認してください。\n詳細: ' + e.message);
     return { data: [], total: 0 };
   } finally {
     showLoading(false);
