@@ -1517,6 +1517,11 @@ body {
 </div>
 
 <script>
+// ===================== CONFIG（ここを変更） =====================
+const SUPABASE_URL = 'https://mfdijochgbxchhmnpusi.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_X5JjxOmBwjhQgQdiuppo5A_SNIt8e6H
+';
+
 // ===================== STATE =====================
 let allData = [];
 let filtered = [];
@@ -1524,122 +1529,125 @@ let selectedCards = new Set();
 let callData = {};
 let currentKw = '';
 let activePanel = null;
+let currentPage = 1;
+const PAGE_SIZE = 20;
 
-// フィルター状態
 const filters = {
   industries: new Set(),
   areas: new Set(),
   empRanges: new Set(),
-  stocks: new Set()
+  stocks: new Set(),
+  contact: { tel: false, fax: false, mail: false }
 };
 
 const LOGO_COLORS = ['#ea6000','#3b82f6','#2aab6e','#8b5cf6','#f59e0b','#ef4444','#0ea5e9','#ec4899'];
 
-// ===================== CSV PARSER =====================
-function decodeCSV(buffer) {
-  const arr = new Uint8Array(buffer);
-  if (arr[0] === 0xEF && arr[1] === 0xBB && arr[2] === 0xBF) {
-    return new TextDecoder('utf-8').decode(buffer);
-  }
+// ===================== SUPABASE API =====================
+async function fetchCompanies(params = {}) {
+  showLoading(true);
   try {
-    const sjis = new TextDecoder('shift-jis').decode(buffer);
-    const repCount = (sjis.match(/\uFFFD/g) || []).length;
-    if (repCount < sjis.length * 0.005) return sjis;
-  } catch(e) {}
-  return new TextDecoder('utf-8').decode(buffer);
-}
+    let url = `${SUPABASE_URL}/rest/v1/companies?select=*`;
 
-function parseCSVFull(text) {
-  const result = [];
-  let i = 0;
-  const n = text.length;
-  while (i < n) {
-    const row = [];
-    while (i < n) {
-      let field = '';
-      if (text[i] === '"') {
-        i++;
-        while (i < n) {
-          if (text[i] === '"') {
-            if (i + 1 < n && text[i+1] === '"') { field += '"'; i += 2; }
-            else { i++; break; }
-          } else { field += text[i]; i++; }
-        }
-      } else {
-        while (i < n && text[i] !== ',' && text[i] !== '\r' && text[i] !== '\n') {
-          field += text[i]; i++;
-        }
+    // フリーワード検索
+    if (params.kw) {
+      url += `&会社名=ilike.*${encodeURIComponent(params.kw)}*`;
+    }
+
+    // 都道府県
+    if (params.areas && params.areas.size > 0) {
+      const prefList = [...params.areas].map(p => `"${p}"`).join(',');
+      url += `&住所（都道府県）=in.(${prefList})`;
+    }
+
+    // 業界
+    if (params.industries && params.industries.size > 0) {
+      const indList = [...params.industries].map(p => `"${p}"`).join(',');
+      url += `&メイン大業界=in.(${indList})`;
+    }
+
+    // 上場種別
+    if (params.stocks && params.stocks.size > 0) {
+      const stockList = [...params.stocks].map(p => `"${p}"`).join(',');
+      url += `&上場種別=in.(${stockList})`;
+    }
+
+    // 連絡先
+    if (params.contact) {
+      if (params.contact.tel) url += `&電話番号=not.is.null`;
+      if (params.contact.mail) url += `&メールアドレス=not.is.null`;
+      if (params.contact.fax) url += `&FAX番号=not.is.null`;
+    }
+
+    // ページネーション
+    const offset = ((params.page || 1) - 1) * PAGE_SIZE;
+    url += `&limit=${PAGE_SIZE}&offset=${offset}`;
+
+    // 件数取得用ヘッダー
+    const res = await fetch(url, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'count=exact'
       }
-      row.push(field);
-      if (i < n && text[i] === ',') { i++; } else { break; }
-    }
-    if (i < n && text[i] === '\r') i++;
-    if (i < n && text[i] === '\n') i++;
-    if (row.length > 0 && row.some(v => v.trim())) result.push(row);
+    });
+
+    if (!res.ok) throw new Error('APIエラー: ' + res.status);
+
+    const data = await res.json();
+    const total = parseInt(res.headers.get('Content-Range')?.split('/')[1] || '0');
+
+    return { data, total };
+  } catch(e) {
+    console.error(e);
+    alert('データの取得に失敗しました。\nSupabaseのURLとAPIキーを確認してください。');
+    return { data: [], total: 0 };
+  } finally {
+    showLoading(false);
   }
-  return result;
 }
 
-function parseCSV(text) {
-  const allRows = parseCSVFull(text);
-  if (allRows.length < 2) return [];
-  let headerIdx = -1;
-  for (let i = 0; i < Math.min(10, allRows.length); i++) {
-    const joined = allRows[i].join(',');
-    if (joined.includes('会社名') && joined.includes('電話番号')) { headerIdx = i; break; }
+async function fetchFilterOptions() {
+  try {
+    // 業界一覧取得
+    const indRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/companies?select=メイン大業界&メイン大業界=not.is.null`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    const indData = await indRes.json();
+    const industries = [...new Set(indData.map(r => r['メイン大業界']).filter(Boolean))].sort();
+
+    // 都道府県一覧取得
+    const prefRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/companies?select=住所（都道府県）&住所（都道府県）=not.is.null`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    const prefData = await prefRes.json();
+    const prefs = [...new Set(prefData.map(r => r['住所（都道府県）']).filter(Boolean))].sort();
+
+    // 上場種別一覧取得
+    const stockRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/companies?select=上場種別&上場種別=not.is.null`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    const stockData = await stockRes.json();
+    const stocks = [...new Set(stockData.map(r => r['上場種別']).filter(Boolean))].sort();
+
+    buildFilterUI(industries, prefs, stocks);
+  } catch(e) {
+    console.error('フィルター取得エラー:', e);
   }
-  if (headerIdx === -1) return [];
-  const headers = allRows[headerIdx].map(h => h.trim());
-  const rows = [];
-  for (let i = headerIdx + 1; i < allRows.length; i++) {
-    const vals = allRows[i];
-    if (!vals.length || vals.every(v => !v.trim())) continue;
-    const obj = {};
-    headers.forEach((h, idx) => { obj[h] = (vals[idx] || '').trim(); });
-    if (!obj['会社名']) continue;
-    rows.push(obj);
-  }
-  return rows;
 }
 
-// ===================== CSV LOAD =====================
-function handleCsvLoad(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    const text = decodeCSV(ev.target.result);
-    const data = parseCSV(text);
-    if (data.length === 0) {
-      alert('データを読み込めませんでした。\nCSVのカラムに「会社名」と「電話番号」が含まれているか確認してください。');
-      return;
-    }
-    allData = data;
-    loadCallData();
-    buildDynamicFilters();
-    closeModal();
-    // ヘッダーに件数表示
-    document.querySelector('.nav-count') && (document.querySelector('.nav-count').textContent = allData.length.toLocaleString() + '件 読込済');
-    doFilter();
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-// ===================== DYNAMIC FILTERS =====================
-function buildDynamicFilters() {
-  // 業界（左カラム）
-  const industries = [...new Set(allData.map(r => r['メイン大業界']).filter(Boolean))].sort();
+function buildFilterUI(industries, prefs, stocks) {
+  // 業界
   const leftEl = document.querySelector('.industry-left');
   if (leftEl) {
-    leftEl.innerHTML = industries.map((ind, i) => {
-      const cnt = allData.filter(r => r['メイン大業界'] === ind).length;
-      return `<div class="industry-left-item ${i===0?'active':''}" onclick="selectIndustryCategory(this,'${esc(ind)}')">${esc(ind)} <span class="count">${cnt.toLocaleString()}</span></div>`;
-    }).join('');
-    if (industries.length > 0) showIndustrySubs(industries[0]);
+    leftEl.innerHTML = industries.map((ind, i) =>
+      `<div class="industry-left-item ${i===0?'active':''}" onclick="selectIndustryCategory(this,'${esc(ind)}')">${esc(ind)}</div>`
+    ).join('');
   }
 
   // 都道府県
-  const prefs = [...new Set(allData.map(r => r['住所（都道府県）']).filter(Boolean))].sort();
   const areaGrid = document.getElementById('areaGrid');
   if (areaGrid) {
     areaGrid.innerHTML = prefs.map(pref =>
@@ -1647,70 +1655,53 @@ function buildDynamicFilters() {
     ).join('');
   }
 
-  // 件数バッジ更新
-  document.getElementById('hitCount').textContent = allData.length.toLocaleString();
-  document.getElementById('bottomCount').textContent = allData.length.toLocaleString();
-}
-
-function showIndustrySubs(bigName) {
-  const subs = [...new Set(allData.filter(r => r['メイン大業界'] === bigName).map(r => r['メイン小業界']).filter(Boolean))].sort();
-  const grid = document.getElementById('industryGrid');
-  if (grid) {
-    grid.innerHTML = subs.map(s => {
-      const cnt = allData.filter(r => r['メイン小業界'] === s).length;
-      return `<label class="industry-check"><input type="checkbox" class="industry-sub-cb" value="${esc(s)}"> ${esc(s)} <span class="sub-count">${cnt}</span></label>`;
-    }).join('');
+  // 上場種別
+  const stockEl = document.getElementById('stockChecks');
+  if (stockEl) {
+    stockEl.innerHTML = stocks.map(s =>
+      `<label class="scale-check"><input type="checkbox" class="stock-cb" value="${esc(s)}"> ${esc(s)}</label>`
+    ).join('');
   }
-  const title = document.getElementById('industryRightTitle');
-  if (title) title.textContent = bigName + ' — 小分類';
 }
 
-// ===================== FILTER =====================
-function doFilter() {
-  if (allData.length === 0) return;
+// ===================== SEARCH & FILTER =====================
+async function doFilter(page = 1) {
+  currentPage = page;
+  const params = {
+    kw: currentKw,
+    areas: filters.areas,
+    industries: filters.industries,
+    stocks: filters.stocks,
+    contact: filters.contact,
+    page
+  };
 
-  filtered = allData.filter(row => {
-    // フリーワード
-    if (currentKw) {
-      const target = [row['会社名'], row['会社名ひらがな'], row['事業内容キーワード'], row['一言説明'], row['会社概要']].join(' ').toLowerCase();
-      if (!target.includes(currentKw.toLowerCase())) return false;
-    }
-    // 業界
-    if (filters.industries.size > 0) {
-      if (!filters.industries.has(row['メイン大業界']) && !filters.industries.has(row['メイン小業界'])) return false;
-    }
-    // 都道府県
-    if (filters.areas.size > 0) {
-      if (!filters.areas.has(row['住所（都道府県）'])) return false;
-    }
-    // 従業員数
-    if (filters.empRanges.size > 0) {
-      const emp = parseInt(row['従業員数']) || 0;
-      let ok = false;
-      if (filters.empRanges.has('〜10名') && emp <= 10) ok = true;
-      if (filters.empRanges.has('11〜50名') && emp >= 11 && emp <= 50) ok = true;
-      if (filters.empRanges.has('51〜100名') && emp >= 51 && emp <= 100) ok = true;
-      if (filters.empRanges.has('101〜300名') && emp >= 101 && emp <= 300) ok = true;
-      if (filters.empRanges.has('301〜1000名') && emp >= 301 && emp <= 1000) ok = true;
-      if (filters.empRanges.has('1001名以上') && emp >= 1001) ok = true;
-      if (!ok) return false;
-    }
-    // 上場種別
-    if (filters.stocks.size > 0) {
-      if (!filters.stocks.has(row['上場種別'])) return false;
-    }
-    return true;
-  });
+  const { data, total } = await fetchCompanies(params);
+  filtered = data;
 
-  document.getElementById('hitCount').textContent = filtered.length.toLocaleString();
-  document.getElementById('bottomCount').textContent = filtered.length.toLocaleString();
-  renderCards(filtered);
+  document.getElementById('hitCount').textContent = total.toLocaleString();
+  document.getElementById('bottomCount').textContent = total.toLocaleString();
+
+  renderCards(data);
+  renderPagination(total, page);
+}
+
+// ===================== LOADING =====================
+function showLoading(show) {
+  const wrap = document.getElementById('resultsContainer');
+  if (show) {
+    wrap.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text3);">
+      <div style="font-size:32px;margin-bottom:12px;animation:spin 1s linear infinite;display:inline-block;">⟳</div>
+      <div style="font-size:14px;">検索中...</div>
+    </div>
+    <style>@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>`;
+  }
 }
 
 // ===================== RENDER CARDS =====================
 function renderCards(data) {
   const container = document.getElementById('resultsContainer');
-  if (data.length === 0) {
+  if (!data || data.length === 0) {
     container.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text3);">
       <div style="font-size:36px;margin-bottom:12px;">🔍</div>
       <div style="font-size:15px;font-weight:600;">条件に該当する企業がありません</div>
@@ -1719,7 +1710,7 @@ function renderCards(data) {
     return;
   }
 
-  container.innerHTML = data.slice(0, 50).map((row, idx) => {
+  container.innerHTML = data.map((row, idx) => {
     const name = row['会社名'] || '';
     const logoChar = name.charAt(0) || '？';
     const logoColor = LOGO_COLORS[name.charCodeAt(0) % LOGO_COLORS.length] || '#ea6000';
@@ -1740,9 +1731,6 @@ function renderCards(data) {
     const kwHtml = kws.map(k => `<a class="keyword-chip">${esc(k.trim())}</a>`).join('');
     const desc = row['一言説明'] || '';
     const stockHtml = stock && stock !== '未上場' ? `<span class="stock-badge">${esc(stock)}</span>` : '';
-    const isSelected = selectedCards.has(idx);
-
-    // 架電ステータス
     const key = row['法人番号'] || name;
     const cd = callData[key] || { status: '未架電', memo: '' };
     const statusOpts = ['未架電','折返待ち','アポ済','NG','保留'].map(s =>
@@ -1754,15 +1742,15 @@ function renderCards(data) {
       : esc(name);
 
     return `
-    <div class="result-card ${isSelected?'selected':''}" onclick="toggleCard(${idx},event)">
+    <div class="result-card" onclick="toggleCard(${idx},event)">
       <div class="card-top">
-        <input type="checkbox" class="checkbox-main" ${isSelected?'checked':''} onclick="event.stopPropagation();toggleCard(${idx},event)">
+        <input type="checkbox" class="checkbox-main" onclick="event.stopPropagation();toggleCard(${idx},event)">
         <div class="card-logo" style="color:${logoColor};font-size:20px;font-weight:800;">${esc(logoChar)}</div>
         <div class="card-main">
           <div class="card-breadcrumb">${esc(ind)}${indSub?' › '+esc(indSub):''}</div>
           <div class="card-name">${nameDisplay} ${stockHtml}</div>
           <div class="card-info-row">
-            <div class="card-info-item">📍 ${esc(pref)} ${esc(addr).substring(0,15)}${addr.length>15?'...':''}</div>
+            ${pref ? `<div class="card-info-item">📍 ${esc(pref)} ${esc(addr).substring(0,15)}${addr.length>15?'...':''}</div>` : ''}
             ${emp ? `<div class="card-info-item">👥 ${esc(emp)}</div>` : ''}
             ${ceo ? `<div class="card-info-item">👤 ${esc(ceo)}</div>` : ''}
           </div>
@@ -1774,7 +1762,7 @@ function renderCards(data) {
           </div>
         </div>
         <div class="card-right">
-          <select style="border:1px solid var(--border2);border-radius:4px;padding:5px 20px 5px 8px;font-size:11px;font-family:inherit;background:white;outline:none;cursor:pointer;appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' fill='%239094a8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 5px center;min-width:100px;"
+          <select style="border:1px solid var(--border2);border-radius:4px;padding:5px 20px 5px 8px;font-size:11px;font-family:inherit;background:white;outline:none;cursor:pointer;appearance:none;min-width:100px;"
             onchange="changeStatus(event,'${esc(key)}')" onclick="event.stopPropagation()">${statusOpts}</select>
         </div>
       </div>
@@ -1782,7 +1770,7 @@ function renderCards(data) {
         ${match > 0 ? `<div class="match-pct-row">マッチ度 <span class="match-pct-num" style="color:${matchColor}">${match}%</span></div>` : ''}
         <div class="keyword-row">${kwHtml || (desc ? `<span style="color:var(--text2)">${esc(desc).substring(0,60)}...</span>` : '')}</div>
         <div style="flex-basis:100%;display:flex;gap:6px;align-items:flex-end;margin-top:4px;">
-          <textarea style="flex:1;background:#f8f9fb;border:1px solid var(--border);border-radius:4px;padding:6px 8px;font-size:11px;font-family:inherit;color:var(--text);resize:none;outline:none;min-height:44px;" 
+          <textarea style="flex:1;background:#f8f9fb;border:1px solid var(--border);border-radius:4px;padding:6px 8px;font-size:11px;font-family:inherit;color:var(--text);resize:none;outline:none;min-height:44px;"
             placeholder="架電メモ・担当者情報など..." rows="2"
             onclick="event.stopPropagation()" onfocus="event.stopPropagation()"
             onchange="changeMemo(event,'${esc(key)}')">${esc(cd.memo||'')}</textarea>
@@ -1792,18 +1780,58 @@ function renderCards(data) {
       </div>
     </div>`;
   }).join('');
+}
 
-  if (data.length > 50) {
-    container.innerHTML += `<div style="text-align:center;padding:16px;font-size:12px;color:var(--text3);">上位50件を表示中。CSV出力で全件取得できます。</div>`;
+// ===================== PAGINATION =====================
+function renderPagination(total, page) {
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  const bar = document.getElementById('paginationBar');
+  if (!bar) return;
+  bar.style.display = total > 0 ? 'flex' : 'none';
+
+  const info = document.getElementById('pageInfo');
+  if (info) {
+    const start = (page - 1) * PAGE_SIZE + 1;
+    const end = Math.min(page * PAGE_SIZE, total);
+    info.textContent = `${start}–${end} / ${total.toLocaleString()}件`;
   }
+
+  const btns = document.getElementById('pageBtns');
+  if (!btns) return;
+  let html = `<button class="pg-btn" onclick="doFilter(${page-1})" ${page<=1?'disabled':''}>‹</button>`;
+  let pages = [];
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
+  } else {
+    pages = [1];
+    if (page > 3) pages.push('…');
+    for (let i = Math.max(2, page-1); i <= Math.min(totalPages-1, page+1); i++) pages.push(i);
+    if (page < totalPages - 2) pages.push('…');
+    pages.push(totalPages);
+  }
+  pages.forEach(p => {
+    if (p === '…') html += `<button class="pg-btn" disabled>…</button>`;
+    else html += `<button class="pg-btn ${p===page?'active':''}" onclick="doFilter(${p})">${p}</button>`;
+  });
+  html += `<button class="pg-btn" onclick="doFilter(${page+1})" ${page>=totalPages?'disabled':''}>›</button>`;
+  btns.innerHTML = html;
 }
 
 // ===================== CARD ACTIONS =====================
 function toggleCard(idx, e) {
-  if (e && (e.target.tagName === 'A' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON')) return;
-  if (selectedCards.has(idx)) selectedCards.delete(idx);
-  else selectedCards.add(idx);
-  renderCards(filtered);
+  if (e && ['A','SELECT','TEXTAREA','BUTTON'].includes(e.target.tagName)) return;
+  const card = document.querySelectorAll('.result-card')[idx];
+  if (!card) return;
+  const cb = card.querySelector('.checkbox-main');
+  if (selectedCards.has(idx)) {
+    selectedCards.delete(idx);
+    card.classList.remove('selected');
+    if (cb) cb.checked = false;
+  } else {
+    selectedCards.add(idx);
+    card.classList.add('selected');
+    if (cb) cb.checked = true;
+  }
 }
 
 // ===================== STATUS & MEMO =====================
@@ -1834,21 +1862,42 @@ function loadCallData() {
 }
 
 // ===================== EXPORT =====================
-function exportCsv() {
-  const targets = selectedCards.size > 0 ? [...selectedCards].sort((a,b)=>a-b).map(i=>filtered[i]) : filtered;
-  if (!targets.length) { alert('出力するデータがありません'); return; }
-  const headers = allData.length > 0 ? Object.keys(allData[0]) : [];
-  const extra = ['架電ステータス','架電メモ'];
-  const csv = [[...headers,...extra].map(csvEsc), ...targets.map(row => {
-    const key = row['法人番号'] || row['会社名'];
-    const cd = callData[key] || {};
-    return [...headers.map(h => csvEsc(row[h]||'')), csvEsc(cd.status||'未架電'), csvEsc(cd.memo||'')];
-  }).map(r=>r.join(','))].join('\n');
-  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href=url; a.download=`営業リスト_${new Date().toLocaleDateString('ja').replace(/\//g,'-')}.csv`; a.click();
-  URL.revokeObjectURL(url);
+async function exportCsv() {
+  // 全件取得
+  showLoading(true);
+  try {
+    let url = `${SUPABASE_URL}/rest/v1/companies?select=*`;
+    if (currentKw) url += `&会社名=ilike.*${encodeURIComponent(currentKw)}*`;
+    if (filters.areas.size > 0) url += `&住所（都道府県）=in.(${[...filters.areas].map(p=>`"${p}"`).join(',')})`;
+    if (filters.industries.size > 0) url += `&メイン大業界=in.(${[...filters.industries].map(p=>`"${p}"`).join(',')})`;
+    url += `&limit=100000`;
+
+    const res = await fetch(url, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    const data = await res.json();
+    if (!data.length) { alert('出力するデータがありません'); return; }
+
+    const headers = Object.keys(data[0]).filter(h => h !== 'id' && h !== 'created_at');
+    const extra = ['架電ステータス', '架電メモ'];
+    const csv = [[...headers, ...extra].map(csvEsc),
+      ...data.map(row => {
+        const key = row['法人番号'] || row['会社名'];
+        const cd = callData[key] || {};
+        return [...headers.map(h => csvEsc(row[h]||'')), csvEsc(cd.status||'未架電'), csvEsc(cd.memo||'')];
+      }).map(r => r.join(','))
+    ].join('\n');
+
+    const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+    const url2 = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url2;
+    a.download = `営業リスト_${new Date().toLocaleDateString('ja').replace(/\//g,'-')}.csv`;
+    a.click();
+    URL.revokeObjectURL(url2);
+  } finally {
+    showLoading(false);
+  }
 }
 
 function csvEsc(v) {
@@ -1877,16 +1926,15 @@ function closeDropdown() {
 }
 
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.filter-row') && !e.target.closest('.dropdown-overlay')) closeDropdown();
+  if (!e.target.closest('.filter-row')) closeDropdown();
 });
 
 function applyFilter(type) {
   closeDropdown();
   if (type === 'industry') {
     filters.industries.clear();
-    document.querySelectorAll('.industry-sub-cb:checked').forEach(cb => filters.industries.add(cb.value));
     document.querySelectorAll('.industry-left-item.active').forEach(el => {
-      const name = el.textContent.replace(/[\d,]+$/,'').trim();
+      const name = el.textContent.trim();
       if (name) filters.industries.add(name);
     });
   }
@@ -1896,71 +1944,67 @@ function applyFilter(type) {
   }
   if (type === 'scale') {
     filters.empRanges.clear();
-    document.querySelectorAll('.emp-cb:checked').forEach(cb => filters.empRanges.add(cb.value));
     filters.stocks.clear();
     document.querySelectorAll('.stock-cb:checked').forEach(cb => filters.stocks.add(cb.value));
   }
+  if (type === 'contact') {
+    filters.contact.tel = document.getElementById('f_tel')?.checked || false;
+    filters.contact.fax = document.getElementById('f_fax')?.checked || false;
+    filters.contact.mail = document.getElementById('f_mail')?.checked || false;
+  }
+  updateActiveTags();
+  doFilter(1);
+}
 
-  // アクティブタグを更新
+function updateActiveTags() {
   const container = document.getElementById('activeFilters');
-  // 既存の同タイプタグを削除
-  container.querySelectorAll(`[data-filter="${type}"]`).forEach(el => el.remove());
+  container.innerHTML = '';
+  if (filters.industries.size > 0) addTag(container, '業界：'+[...filters.industries].join('・'), 'industry');
+  if (filters.areas.size > 0) addTag(container, '地域：'+[...filters.areas].join('・'), 'area');
+  if (filters.stocks.size > 0) addTag(container, [...filters.stocks].join('・'), 'scale');
+  const cLabels = [filters.contact.tel&&'電話',filters.contact.fax&&'FAX',filters.contact.mail&&'メール'].filter(Boolean);
+  if (cLabels.length > 0) addTag(container, cLabels.join('・')+'あり', 'contact');
+}
 
-  const labels = { industry: '業界', area: '地域', scale: '規模・上場' };
-  const sets = { industry: filters.industries, area: filters.areas };
-  const set = sets[type];
-  if (set && set.size > 0) {
-    const tag = document.createElement('div');
-    tag.className = 'filter-tag';
-    tag.dataset.filter = type;
-    tag.innerHTML = `${labels[type]}：${[...set].slice(0,2).join('・')}${set.size>2?'他':''}  <span class="remove" onclick="clearFilterType('${type}')">×</span>`;
-    container.appendChild(tag);
-  }
-  if (type === 'scale' && (filters.empRanges.size > 0 || filters.stocks.size > 0)) {
-    const tag = document.createElement('div');
-    tag.className = 'filter-tag';
-    tag.dataset.filter = 'scale';
-    tag.innerHTML = `規模絞込み <span class="remove" onclick="clearFilterType('scale')">×</span>`;
-    container.appendChild(tag);
-  }
-
-  if (allData.length > 0) doFilter();
+function addTag(container, label, type) {
+  const tag = document.createElement('div');
+  tag.className = 'filter-tag';
+  tag.innerHTML = `${esc(label)} <span class="remove" onclick="clearFilterType('${type}')">×</span>`;
+  container.appendChild(tag);
 }
 
 function clearFilterType(type) {
   if (type === 'industry') filters.industries.clear();
-  if (type === 'area') filters.areas.clear();
-  if (type === 'scale') { filters.empRanges.clear(); filters.stocks.clear(); }
-  document.querySelectorAll(`[data-filter="${type}"]`).forEach(el => el.remove());
-  if (allData.length > 0) doFilter();
+  if (type === 'area') { filters.areas.clear(); document.querySelectorAll('.area-btn').forEach(b=>b.classList.remove('active')); }
+  if (type === 'scale') { filters.stocks.clear(); }
+  if (type === 'contact') { filters.contact = {tel:false,fax:false,mail:false}; }
+  updateActiveTags();
+  doFilter(1);
 }
 
 function selectIndustryCategory(el, name) {
   document.querySelectorAll('.industry-left-item').forEach(i => i.classList.remove('active'));
   el.classList.add('active');
-  showIndustrySubs(name);
 }
 
 function toggleArea(btn) { btn.classList.toggle('active'); }
 
 // ===================== FREEWORD =====================
+let searchTimer = null;
 function handleFreeword(val) {
   currentKw = val;
   const kwTag = document.getElementById('kwFilterTag');
-  if (val) {
-    kwTag.style.display = 'inline-flex';
-    document.getElementById('kwFilterText').textContent = val;
-  } else {
-    kwTag.style.display = 'none';
-  }
-  if (allData.length > 0) doFilter();
+  if (val) { kwTag.style.display='inline-flex'; document.getElementById('kwFilterText').textContent=val; }
+  else { kwTag.style.display='none'; }
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => doFilter(1), 400);
 }
 
 function removeKwFilter() {
   currentKw = '';
   document.getElementById('freewordInput').value = '';
   document.getElementById('kwFilterTag').style.display = 'none';
-  if (allData.length > 0) doFilter();
+  doFilter(1);
 }
 
 function removeFilter(el) { el.parentElement.remove(); }
@@ -1971,7 +2015,9 @@ function clearAll() {
   document.getElementById('freewordInput').value = '';
   document.getElementById('kwFilterTag').style.display = 'none';
   filters.industries.clear(); filters.areas.clear(); filters.empRanges.clear(); filters.stocks.clear();
-  if (allData.length > 0) doFilter();
+  filters.contact = {tel:false,fax:false,mail:false};
+  document.querySelectorAll('.area-btn').forEach(b=>b.classList.remove('active'));
+  doFilter(1);
 }
 
 // ===================== MODAL =====================
@@ -1985,6 +2031,8 @@ function esc(s) {
 
 // ===================== INIT =====================
 loadCallData();
+fetchFilterOptions();
+doFilter(1);
 </script>
 </body>
 </html>
